@@ -36,4 +36,18 @@ namespace poharnok_client_application
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }
+
+    public class GiftCardDTO
+    {
+        public long StoreId { get; set; } = 1; // SQL: StoreId (NOT NULL)
+        public string CardNumber { get; set; } // SQL: CardNumber (NOT NULL)
+        public decimal Amount { get; set; } // SQL: Amount (NOT NULL)
+        public decimal UsedAmount { get; set; } = 0; // SQL: UsedAmount (NOT NULL)
+        public DateTime IssueDateUtc { get; set; } = DateTime.UtcNow; // SQL: IssueDateUtc (NOT NULL)
+        public DateTime ExpirationDateUtc { get; set; } // SQL: ExpirationDateUtc (NOT NULL)
+        public string RecipientEmail { get; set; }
+        public string RecipientName { get; set; }
+        public bool Enabled { get; set; } = true; // SQL: Enabled (bit, NOT NULL)
+    }
+
 }

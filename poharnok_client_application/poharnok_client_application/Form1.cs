@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Net;
+using System.Net.Mail;
 
 namespace poharnok_client_application
 {
@@ -57,10 +59,15 @@ namespace poharnok_client_application
                             .Where(o => o.IsPlaced == false && !string.IsNullOrEmpty(o.UserEmail))
                             .Select(o => new OrderDisplayModel
                             {
+
+                                Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}",
+
+
                                 Azonosito = o.Id,
                                 Email = o.UserEmail,
-                                Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}",
-                                Osszeg = o.TotalGrand
+                                Osszeg = o.TotalGrand,
+                                Frissitve = ParseJsonDate(o.LastUpdatedUtc)
+
                             }).ToList();
 
                         dgvOrders.DataSource = _mindenAdat;
@@ -77,7 +84,39 @@ namespace poharnok_client_application
 
         }
 
+        private void SendEmailWithGiftCard(string recipientEmail, string recipientName, string cardCode)
+        {
+            try
+            {
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("poharnok.contact@gmail.com", "alkalmazas-jelszo"), //IDE NAGYON KÉNE AZ ALKALMAZÁSJELSZÓ 
+                    EnableSsl = true,
+                };
+                string koszones = string.IsNullOrWhiteSpace(recipientName) ? "Vásárlónk" : recipientName;
+                var mailMessage = new MailMessage
+                {
 
+                    From = new MailAddress("poharnok.contact@gmail.com"),
+                    Subject = "Kedves ajándék vár a kosaradban!",
+                    // Megszólítás beillesztése:
+                    Body = $"Kedves {koszones}!\n\n" +
+                           $"Észrevettük, hogy korábban nálam hagytál egy kosarat. " +
+                           $"Szeretnénk segíteni a döntésben, ezért készítettünk neked egy 1500-as ajándékkártyát.\n\n" +
+                           $"A kódod: {cardCode}\n\n" +
+                           "Használd egészséggel a checkoutnál!",
+                    IsBodyHtml = false,
+                };
+
+                mailMessage.To.Add(recipientEmail);
+                smtpClient.Send(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[EMAIL HIBA] {ex.Message}");
+            }
+        }
 
 
         private void UpdateButtonState()
@@ -124,30 +163,74 @@ namespace poharnok_client_application
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
             var lista = (List<OrderDisplayModel>)dgvOrders.DataSource;
             if (lista == null) return;
 
-            int counter = 0;
-            foreach (var item in lista)
+            button2.Enabled = false; // Dupla kattintás ellen
+
+            foreach (var item in lista.Where(x => x.Selected))
             {
-                if (item.Selected) // Csak ha be van pipálva
+                await CreateGiftCardAsync(item.Email, item.Nev);
+            }
+
+            MessageBox.Show("Ajándékkártyák generálva és kiküldve!");
+            UpdateButtonState();
+        }
+
+        private string GenerateGiftCardNumber()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+
+            string GenerateBlock() => new string(Enumerable.Repeat(chars, 4)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            return $"KOSAR-{GenerateBlock()}-{GenerateBlock()}-{GenerateBlock()}-{GenerateBlock()}";
+        }
+
+        private async Task CreateGiftCardAsync(string email, string nev)
+        {
+            string url = "http://20.93.113.186/DesktopModules/Hotcakes/API/rest/v1/giftcards?key=1-ecf245b9-b5b3-4c71-a4d0-e1115fb1fa3d";
+
+            using (HttpClient client = new HttpClient())
+            {
+                var newCard = new GiftCardDTO
                 {
-                    SendCouponEmail(item.Email);
-                    counter++;
+                    StoreId = 1,
+                    CardNumber = GenerateGiftCardNumber(), // Egyedi formátum alkalmazása
+                    Amount = 1500.0m, // Beállítások szerinti minimum összeg
+                    UsedAmount = 0,
+                    IssueDateUtc = DateTime.UtcNow,
+                    ExpirationDateUtc = DateTime.UtcNow.AddMonths(12), // 12 hónapos lejárat
+                    RecipientEmail = email,
+                    RecipientName = nev,
+                    Enabled = true
+                };
+
+                try
+                {
+                    var response = await client.PostAsJsonAsync(url, newCard);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Ha az API létrehozta a kártyát, mehet az e-mail a névvel és a kóddal
+                        SendEmailWithGiftCard(email, nev, newCard.CardNumber);
+                        System.Diagnostics.Debug.WriteLine($"[SIKER] Kártya és email elküldve: {email}");
+                    }
+                    else
+                    {
+                        string error = await response.Content.ReadAsStringAsync();
+                        System.Diagnostics.Debug.WriteLine($"[HIBA] API válasz: {error}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[KIVÉTEL] {ex.Message}");
                 }
             }
-            MessageBox.Show($"{counter} db kupon elküldve!");
         }
-
-        private void SendCouponEmail(string email)
-        {
-            // Szimuláció a Debug ablakba
-            System.Diagnostics.Debug.WriteLine($"[KÜLDÉS] Cél: {email} | Kód: SAVE10");
-        }
-
-        
 
         private void ApplyFilters()
         {
@@ -211,6 +294,10 @@ namespace poharnok_client_application
             ApplyFilters();
         }
 
-
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dateTimePicker1.Value = DateTime.Now.AddDays(-7);
+            dateTimePicker2.Value = DateTime.Now;
+        }
     }
 }
