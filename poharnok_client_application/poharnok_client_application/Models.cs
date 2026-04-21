@@ -8,6 +8,14 @@ namespace poharnok_client_application
         [JsonPropertyName("Content")]
         public List<OrderSnapshotDTO> Content { get; set; }
     }
+    public class OrderDisplayModel
+    {
+        public bool Selected { get; set; } = false; //alapértelmezetten nincsenek kijelölve a rendelések
+        public long Azonosito { get; set; }
+        public string Email { get; set; }
+        public string Nev { get; set; }
+        public decimal Osszeg { get; set; }
+    }
 
     public class OrderSnapshotDTO
     {
@@ -16,7 +24,7 @@ namespace poharnok_client_application
         public string OrderNumber { get; set; }
         public string UserEmail { get; set; }
         public decimal TotalGrand { get; set; }
-        public bool IsPlaced { get; set; } // EZ KELL NEKÜNK!
+        public bool IsPlaced { get; set; }
         public AddressDTO BillingAddress { get; set; }
     }
 
