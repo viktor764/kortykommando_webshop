@@ -10,11 +10,12 @@ namespace poharnok_client_application
     }
     public class OrderDisplayModel
     {
-        public bool Selected { get; set; } = false; //alapértelmezetten nincsenek kijelölve a rendelések
+        public bool Selected { get; set; } = true;
         public long Azonosito { get; set; }
         public string Email { get; set; }
         public string Nev { get; set; }
         public decimal Osszeg { get; set; }
+        public DateTime Frissitve { get; set; } // Szűréshez és megjelenítéshez
     }
 
     public class OrderSnapshotDTO
@@ -26,6 +27,7 @@ namespace poharnok_client_application
         public decimal TotalGrand { get; set; }
         public bool IsPlaced { get; set; }
         public AddressDTO BillingAddress { get; set; }
+        public string LastUpdatedUtc { get; set; } // Az API-ból stringként jön: "/Date(123...)/"
     }
 
     public class AddressDTO
