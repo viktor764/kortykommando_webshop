@@ -15,10 +15,9 @@ namespace poharnok_client_application
         public string bvin { get; set; }
         public string OrderNumber { get; set; }
         public string UserEmail { get; set; }
-        public string UserID { get; set; }
         public decimal TotalGrand { get; set; }
+        public bool IsPlaced { get; set; } // EZ KELL NEKÜNK!
         public AddressDTO BillingAddress { get; set; }
-
     }
 
     public class AddressDTO
