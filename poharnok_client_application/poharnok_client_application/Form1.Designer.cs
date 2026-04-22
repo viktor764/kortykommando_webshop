@@ -44,9 +44,17 @@
             label4 = new Label();
             label5 = new Label();
             checkBox1 = new CheckBox();
+            dgvGiftCards = new DataGridView();
+            button4 = new Button();
+            label6 = new Label();
+            label7 = new Label();
+            dateTimePicker3 = new DateTimePicker();
+            dateTimePicker4 = new DateTimePicker();
+            cmbAmount = new ComboBox();
             pictureBox1 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvGiftCards).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -72,12 +80,12 @@
             // 
             // dgvOrders
             // 
-            dgvOrders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvOrders.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvOrders.Location = new Point(10, 150);
             dgvOrders.Name = "dgvOrders";
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(880, 533);
+            dgvOrders.Size = new Size(889, 236);
             dgvOrders.TabIndex = 1;
             dgvOrders.CellValueChanged += dgvOrders_CellValueChanged;
             dgvOrders.CurrentCellDirtyStateChanged += dgvOrders_CurrentCellDirtyStateChanged;
@@ -99,7 +107,7 @@
             textBoxFilter.Location = new Point(141, 37);
             textBoxFilter.Margin = new Padding(3, 4, 3, 4);
             textBoxFilter.Name = "textBoxFilter";
-            textBoxFilter.Size = new Size(228, 36);
+            textBoxFilter.Size = new Size(233, 36);
             textBoxFilter.TabIndex = 3;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
             // 
@@ -135,7 +143,7 @@
             // 
             textBoxPrice.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             textBoxPrice.Font = new Font("Segoe UI", 13F);
-            textBoxPrice.Location = new Point(376, 37);
+            textBoxPrice.Location = new Point(381, 37);
             textBoxPrice.Margin = new Padding(3, 4, 3, 4);
             textBoxPrice.Name = "textBoxPrice";
             textBoxPrice.Size = new Size(127, 36);
@@ -145,7 +153,7 @@
             // dateTimePicker1
             // 
             dateTimePicker1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dateTimePicker1.Location = new Point(511, 41);
+            dateTimePicker1.Location = new Point(516, 41);
             dateTimePicker1.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(188, 27);
@@ -155,7 +163,7 @@
             // dateTimePicker2
             // 
             dateTimePicker2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dateTimePicker2.Location = new Point(706, 41);
+            dateTimePicker2.Location = new Point(711, 41);
             dateTimePicker2.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker2.Name = "dateTimePicker2";
             dateTimePicker2.Size = new Size(188, 27);
@@ -166,7 +174,7 @@
             // 
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
-            label3.Location = new Point(376, 13);
+            label3.Location = new Point(381, 13);
             label3.Name = "label3";
             label3.Size = new Size(121, 20);
             label3.TabIndex = 10;
@@ -176,7 +184,7 @@
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Location = new Point(511, 13);
+            label4.Location = new Point(516, 13);
             label4.Name = "label4";
             label4.Size = new Size(98, 20);
             label4.TabIndex = 11;
@@ -186,7 +194,7 @@
             // 
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5.AutoSize = true;
-            label5.Location = new Point(706, 13);
+            label5.Location = new Point(711, 13);
             label5.Name = "label5";
             label5.Size = new Size(96, 20);
             label5.TabIndex = 12;
@@ -196,7 +204,7 @@
             // 
             checkBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(682, 101);
+            checkBox1.Location = new Point(687, 112);
             checkBox1.Margin = new Padding(3, 4, 3, 4);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(212, 24);
@@ -205,11 +213,86 @@
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
+            // dgvGiftCards
+            // 
+            dgvGiftCards.AccessibleDescription = "";
+            dgvGiftCards.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvGiftCards.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGiftCards.Location = new Point(10, 467);
+            dgvGiftCards.Name = "dgvGiftCards";
+            dgvGiftCards.RowHeadersWidth = 51;
+            dgvGiftCards.Size = new Size(889, 317);
+            dgvGiftCards.TabIndex = 15;
+            dgvGiftCards.CellFormatting += dgvGiftCards_CellFormatting;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(7, 405);
+            button4.Name = "button4";
+            button4.Size = new Size(123, 48);
+            button4.TabIndex = 16;
+            button4.Text = "Frissites";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Location = new Point(711, 405);
+            label6.Name = "label6";
+            label6.Size = new Size(96, 20);
+            label6.TabIndex = 20;
+            label6.Text = "Végső dátum";
+            // 
+            // label7
+            // 
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Location = new Point(516, 405);
+            label7.Name = "label7";
+            label7.Size = new Size(98, 20);
+            label7.TabIndex = 19;
+            label7.Text = "Kezdő dátum";
+            // 
+            // dateTimePicker3
+            // 
+            dateTimePicker3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dateTimePicker3.Location = new Point(516, 433);
+            dateTimePicker3.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker3.Name = "dateTimePicker3";
+            dateTimePicker3.Size = new Size(188, 27);
+            dateTimePicker3.TabIndex = 18;
+            // 
+            // dateTimePicker4
+            // 
+            dateTimePicker4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dateTimePicker4.Location = new Point(711, 433);
+            dateTimePicker4.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker4.Name = "dateTimePicker4";
+            dateTimePicker4.Size = new Size(188, 27);
+            dateTimePicker4.TabIndex = 17;
+            // 
+            // cmbAmount
+            // 
+            cmbAmount.FormattingEnabled = true;
+            cmbAmount.Location = new Point(270, 88);
+            cmbAmount.Name = "cmbAmount";
+            cmbAmount.Size = new Size(104, 28);
+            cmbAmount.TabIndex = 21;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(904, 713);
+            ClientSize = new Size(909, 796);
+            Controls.Add(cmbAmount);
+            Controls.Add(label6);
+            Controls.Add(label7);
+            Controls.Add(dateTimePicker3);
+            Controls.Add(dateTimePicker4);
+            Controls.Add(button4);
+            Controls.Add(dgvGiftCards);
             Controls.Add(checkBox1);
             Controls.Add(pictureBox1);
             Controls.Add(label5);
@@ -230,6 +313,7 @@
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvGiftCards).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -251,5 +335,12 @@
         private Label label5;
         private PictureBox pictureBox1;
         private CheckBox checkBox1;
+        private DataGridView dgvGiftCards;
+        private Button button4;
+        private Label label6;
+        private Label label7;
+        private DateTimePicker dateTimePicker3;
+        private DateTimePicker dateTimePicker4;
+        private ComboBox cmbAmount;
     }
 }

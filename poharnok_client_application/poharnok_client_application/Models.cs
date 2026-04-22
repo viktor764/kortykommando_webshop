@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace poharnok_client_application
@@ -41,6 +42,7 @@ namespace poharnok_client_application
     public class GiftCardDTO
     {
         [JsonPropertyName("StoreId")]
+        [Browsable(false)]
         public long StoreId { get; set; }
 
         [JsonPropertyName("CardNumber")]
@@ -62,10 +64,20 @@ namespace poharnok_client_application
         public string RecipientEmail { get; set; }
 
         [JsonPropertyName("RecipientName")]
+        [Browsable(false)]
         public string RecipientName { get; set; }
 
         [JsonPropertyName("Enabled")]
+        [Browsable(false)]
         public bool Enabled { get; set; }
+    }
+    public class GiftCardDisplayModel
+    {
+        public string Kártyaszám { get; set; }
+        public decimal Összeg { get; set; }
+        public decimal Elhasznált { get; set; }
+        public string Email { get; set; }
+        public DateTime Létrehozva { get; set; } // Valódi DateTime a szűréshez
     }
 
     public class GiftCardRoot
