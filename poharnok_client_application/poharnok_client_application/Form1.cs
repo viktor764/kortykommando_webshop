@@ -104,7 +104,7 @@ namespace poharnok_client_application
                     Body = $"Kedves {keresztnev}!\n\n" +
                            $"Észrevettük, hogy korábban nálunk hagytál egy kosarat. " +
                            $"Szeretnénk segíteni a döntésben, ezért készítettünk neked egy 1500 Forintos ajándékkártyát.\n\n" +
-                           $"A kódod: {cardCode}\n\n" +
+                           $"A kódod: {cardCode}\n" +
                            "Használd egészséggel a checkoutnál,\n" +
                            "Üdvözlettel a Pohárnok csapata :)",
                     IsBodyHtml = false,
@@ -125,7 +125,7 @@ namespace poharnok_client_application
             var lista = dgvOrders.DataSource as List<OrderDisplayModel>;
 
             // Feltétel: Van adat ÉS van legalább egy kijelölt elem
-            bool hasSelection = lista != null && lista.Any(x => x.Selected);
+            bool hasSelection = lista != null && lista.Any(x => x.Kijelolve);
 
             button2.Enabled = hasSelection;
 
@@ -177,7 +177,7 @@ namespace poharnok_client_application
             int elküldve = 0;
             int kihagyva = 0;
 
-            foreach (var item in lista.Where(x => x.Selected))
+            foreach (var item in lista.Where(x => x.Kijelolve))
             {
                 // 2. Ellenõrzés a letöltött listában
                 bool marVanNeki = letezoKartyak.Any(c =>
@@ -231,44 +231,41 @@ namespace poharnok_client_application
 
         private async Task CreateGiftCardAsync(string email, string nev)
         {
-            // Az API végpont a Gift Cards létrehozásához [cite: 2, 226]
             string url = "http://20.93.113.186/DesktopModules/Hotcakes/API/rest/v1/giftcards?key=1-ecf245b9-b5b3-4c71-a4d0-e1115fb1fa3d";
 
             using (HttpClient client = new HttpClient())
             {
-                // Dátumok átalakítása a Hotcakes által kedvelt /Date(ms)/ formátumra
-                long issueMs = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                long expiryMs = new DateTimeOffset(DateTime.UtcNow.AddMonths(12)).ToUnixTimeMilliseconds();
+                // A szerver ezt a formátumot várja: 2026-04-22T12:00:00Z
+                string issueDate = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                string expiryDate = DateTime.UtcNow.AddMonths(1).ToString("yyyy-MM-ddTHH:mm:ssZ");
 
                 var newCard = new GiftCardDTO
                 {
-                    StoreId = 1, // Az adatbázis séma szerint kötelezõ
-                    CardNumber = GenerateGiftCardNumber(), // KOSARXXXX formátum
-                    Amount = 500.0m, // Minimum összeg a beállítások alapján
+                    StoreId = 1,
+                    CardNumber = GenerateGiftCardNumber(),
+                    Amount = 1500.0m,
                     UsedAmount = 0,
-                    IssueDateUtc = $"/Date({issueMs})/",
-                    ExpirationDateUtc = $"/Date({expiryMs})/",
+                    IssueDateUtc = issueDate,        // Frissített formátum
+                    ExpirationDateUtc = expiryDate,  // Frissített formátum
                     RecipientEmail = email,
                     RecipientName = nev,
-                    Enabled = true // SQL: bit, NOT NULL
+                    Enabled = true
                 };
 
                 try
                 {
-                    // POST kérés küldése [cite: 226]
                     var response = await client.PostAsJsonAsync(url, newCard);
+                    string responseBody = await response.Content.ReadAsStringAsync();
 
-                    if (response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode && !responseBody.Contains("\"Errors\":[{"))
                     {
-                        System.Diagnostics.Debug.WriteLine($"[API SIKER] Kártya mentve: {newCard.CardNumber}");
-
-                        // Ha az API-ba bekerült, mehet az email a vevõnek
+                        System.Diagnostics.Debug.WriteLine($"[SIKER] Kártya mentve!");
                         SendEmailWithGiftCard(email, nev, newCard.CardNumber);
                     }
                     else
                     {
-                        string error = await response.Content.ReadAsStringAsync();
-                        System.Diagnostics.Debug.WriteLine($"[API HIBA] {response.StatusCode}: {error}");
+                        // Most már látni fogjuk a hibát, ha a szerver nem mentette el
+                        System.Diagnostics.Debug.WriteLine($"[HIBA] API válasz: {responseBody}");
                     }
                 }
                 catch (Exception ex)
@@ -277,7 +274,6 @@ namespace poharnok_client_application
                 }
             }
         }
-
         private void ApplyFilters()
         {
             string emailSzuro = textBoxFilter.Text.ToLower();
@@ -316,7 +312,7 @@ namespace poharnok_client_application
             // 3. Csak a szûrt elemeken megyünk végig
             foreach (var item in aktualisLista)
             {
-                item.Selected = _allSelected;
+                item.Kijelolve = _allSelected;
             }
 
             // 4. Frissítjük a táblázat megjelenítését
@@ -324,7 +320,7 @@ namespace poharnok_client_application
             UpdateButtonState();
 
             // Opcionális: Gomb szövegének módosítása
-            button3.Text = _allSelected ? "Select None" : "Select All";
+            button3.Text = _allSelected ? "Mind eltávolítása" : "Mind kijelölése";
         }
 
         private void textBoxPrice_TextChanged(object sender, EventArgs e)

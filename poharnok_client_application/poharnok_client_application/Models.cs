@@ -10,7 +10,7 @@ namespace poharnok_client_application
     }
     public class OrderDisplayModel
     {
-        public bool Selected { get; set; } = true;
+        public bool Kijelolve { get; set; } = false;
         public long Azonosito { get; set; }
         public string Email { get; set; }
         public string Nev { get; set; }
@@ -40,17 +40,31 @@ namespace poharnok_client_application
 
     public class GiftCardDTO
     {
+        [JsonPropertyName("StoreId")]
         public long StoreId { get; set; }
+
+        [JsonPropertyName("CardNumber")]
         public string CardNumber { get; set; }
+
+        [JsonPropertyName("Amount")]
         public decimal Amount { get; set; }
+
+        [JsonPropertyName("UsedAmount")]
         public decimal UsedAmount { get; set; }
 
-        // Stringként vesszük át az API-tól, hogy ne dögöljön meg a konvertálásnál
+        [JsonPropertyName("IssueDateUtc")]
         public string IssueDateUtc { get; set; }
+
+        [JsonPropertyName("ExpirationDateUtc")]
         public string ExpirationDateUtc { get; set; }
 
+        [JsonPropertyName("RecipientEmail")]
         public string RecipientEmail { get; set; }
+
+        [JsonPropertyName("RecipientName")]
         public string RecipientName { get; set; }
+
+        [JsonPropertyName("Enabled")]
         public bool Enabled { get; set; }
     }
 
