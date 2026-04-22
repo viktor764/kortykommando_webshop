@@ -91,7 +91,7 @@ namespace poharnok_client_application
                 var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential("poharnok.contact@gmail.com", "zguh viqt wuea csam"), 
+                    Credentials = new NetworkCredential("poharnok.contact@gmail.com", "zguh viqt wuea csam"),
                     EnableSsl = true,
                 };
                 //string koszones = string.IsNullOrWhiteSpace(recipientName) ? "Vásárlónk" : recipientName;
@@ -169,15 +169,53 @@ namespace poharnok_client_application
             var lista = (List<OrderDisplayModel>)dgvOrders.DataSource;
             if (lista == null) return;
 
-            button2.Enabled = false; // Dupla kattintás ellen
+            button2.Enabled = false;
+
+            // 1. Összes létezõ kártya lekérése az API-tól [cite: 207]
+            var letezoKartyak = await GetExistingGiftCardsAsync();
+
+            int elküldve = 0;
+            int kihagyva = 0;
 
             foreach (var item in lista.Where(x => x.Selected))
             {
+                // 2. Ellenõrzés a letöltött listában
+                bool marVanNeki = letezoKartyak.Any(c =>
+                    c.RecipientEmail?.ToLower() == item.Email.ToLower());
+
+                if (!checkBox1.Checked && marVanNeki)
+                {
+                    kihagyva++;
+                    continue;
+                }
+
                 await CreateGiftCardAsync(item.Email, item.Keresztnev);
+                elküldve++;
             }
 
-            MessageBox.Show("Ajándékkártyák generálva és kiküldve!");
+            MessageBox.Show($"{elküldve} kupon email elküldve, {kihagyva} duplikált kupon kihagyva.");
+            button2.Enabled = true;
             UpdateButtonState();
+        }
+
+        private async Task<List<GiftCardDTO>> GetExistingGiftCardsAsync()
+        {
+            string url = "http://20.93.113.186/DesktopModules/Hotcakes/API/rest/v1/giftcards?key=1-ecf245b9-b5b3-4c71-a4d0-e1115fb1fa3d";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // GiftCardRoot-ot kérünk le List helyett
+                    var response = await client.GetFromJsonAsync<GiftCardRoot>(url);
+                    return response?.Content ?? new List<GiftCardDTO>();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"JSON hiba: {ex.Message}");
+                    return new List<GiftCardDTO>();
+                }
+            }
         }
 
         private string GenerateGiftCardNumber()
@@ -193,37 +231,44 @@ namespace poharnok_client_application
 
         private async Task CreateGiftCardAsync(string email, string nev)
         {
+            // Az API végpont a Gift Cards létrehozásához [cite: 2, 226]
             string url = "http://20.93.113.186/DesktopModules/Hotcakes/API/rest/v1/giftcards?key=1-ecf245b9-b5b3-4c71-a4d0-e1115fb1fa3d";
 
             using (HttpClient client = new HttpClient())
             {
+                // Dátumok átalakítása a Hotcakes által kedvelt /Date(ms)/ formátumra
+                long issueMs = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                long expiryMs = new DateTimeOffset(DateTime.UtcNow.AddMonths(12)).ToUnixTimeMilliseconds();
+
                 var newCard = new GiftCardDTO
                 {
-                    StoreId = 1,
-                    CardNumber = GenerateGiftCardNumber(), // Egyedi formátum alkalmazása
-                    Amount = 1500.0m, // Beállítások szerinti minimum összeg
+                    StoreId = 1, // Az adatbázis séma szerint kötelezõ
+                    CardNumber = GenerateGiftCardNumber(), // KOSARXXXX formátum
+                    Amount = 500.0m, // Minimum összeg a beállítások alapján
                     UsedAmount = 0,
-                    IssueDateUtc = DateTime.UtcNow,
-                    ExpirationDateUtc = DateTime.UtcNow.AddMonths(12), // 12 hónapos lejárat
+                    IssueDateUtc = $"/Date({issueMs})/",
+                    ExpirationDateUtc = $"/Date({expiryMs})/",
                     RecipientEmail = email,
                     RecipientName = nev,
-                    Enabled = true
+                    Enabled = true // SQL: bit, NOT NULL
                 };
 
                 try
                 {
+                    // POST kérés küldése [cite: 226]
                     var response = await client.PostAsJsonAsync(url, newCard);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Ha az API létrehozta a kártyát, mehet az e-mail a névvel és a kóddal
+                        System.Diagnostics.Debug.WriteLine($"[API SIKER] Kártya mentve: {newCard.CardNumber}");
+
+                        // Ha az API-ba bekerült, mehet az email a vevõnek
                         SendEmailWithGiftCard(email, nev, newCard.CardNumber);
-                        System.Diagnostics.Debug.WriteLine($"[SIKER] Kártya és email elküldve: {email}");
                     }
                     else
                     {
                         string error = await response.Content.ReadAsStringAsync();
-                        System.Diagnostics.Debug.WriteLine($"[HIBA] API válasz: {error}");
+                        System.Diagnostics.Debug.WriteLine($"[API HIBA] {response.StatusCode}: {error}");
                     }
                 }
                 catch (Exception ex)
@@ -309,6 +354,9 @@ namespace poharnok_client_application
             dateTimePicker2.Value = DateTime.Now;
         }
 
-        
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

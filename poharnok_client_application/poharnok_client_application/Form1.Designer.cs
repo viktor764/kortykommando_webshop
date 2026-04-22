@@ -43,6 +43,7 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
+            checkBox1 = new CheckBox();
             pictureBox1 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
@@ -190,11 +191,24 @@
             label5.TabIndex = 12;
             label5.Text = "Végső dátum";
             // 
+            // checkBox1
+            // 
+            checkBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(613, 87);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(169, 19);
+            checkBox1.TabIndex = 14;
+            checkBox1.Text = "Több kupon engedélyezése";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(791, 535);
+            Controls.Add(checkBox1);
             Controls.Add(pictureBox1);
             Controls.Add(label5);
             Controls.Add(label4);
@@ -235,5 +249,6 @@
         private Label label4;
         private Label label5;
         private PictureBox pictureBox1;
+        private CheckBox checkBox1;
     }
 }
