@@ -99,7 +99,7 @@
             textBoxFilter.Font = new Font("Segoe UI", 13F);
             textBoxFilter.Location = new Point(123, 39);
             textBoxFilter.Name = "textBoxFilter";
-            textBoxFilter.Size = new Size(144, 31);
+            textBoxFilter.Size = new Size(200, 31);
             textBoxFilter.TabIndex = 3;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
             // 
@@ -134,10 +134,11 @@
             // 
             // textBoxPrice
             // 
+            textBoxPrice.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             textBoxPrice.Font = new Font("Segoe UI", 13F);
-            textBoxPrice.Location = new Point(273, 39);
+            textBoxPrice.Location = new Point(329, 39);
             textBoxPrice.Name = "textBoxPrice";
-            textBoxPrice.Size = new Size(168, 31);
+            textBoxPrice.Size = new Size(112, 31);
             textBoxPrice.TabIndex = 7;
             textBoxPrice.TextChanged += textBoxPrice_TextChanged;
             // 
@@ -157,11 +158,13 @@
             dateTimePicker2.Name = "dateTimePicker2";
             dateTimePicker2.Size = new Size(165, 23);
             dateTimePicker2.TabIndex = 9;
+            dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
-            label3.Location = new Point(273, 21);
+            label3.Location = new Point(329, 21);
             label3.Name = "label3";
             label3.Size = new Size(98, 15);
             label3.TabIndex = 10;
@@ -208,7 +211,7 @@
             Controls.Add(button1);
             Margin = new Padding(3, 2, 3, 2);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Pohárnok kliensalkalmazás";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();

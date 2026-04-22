@@ -61,7 +61,7 @@ namespace poharnok_client_application
                             {
 
                                 Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}",
-
+                                Keresztnev = o.BillingAddress?.FirstName ?? "Vásárlónk",
 
                                 Azonosito = o.Id,
                                 Email = o.UserEmail,
@@ -79,33 +79,34 @@ namespace poharnok_client_application
                     MessageBox.Show("Hiba: " + ex.Message);
                 }
             }
-
+            ApplyFilters();
 
 
         }
 
-        private void SendEmailWithGiftCard(string recipientEmail, string recipientName, string cardCode)
+        private void SendEmailWithGiftCard(string recipientEmail, string keresztnev, string cardCode)
         {
             try
             {
                 var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential("poharnok.contact@gmail.com", "alkalmazas-jelszo"), //IDE NAGYON KÉNE AZ ALKALMAZÁSJELSZÓ 
+                    Credentials = new NetworkCredential("poharnok.contact@gmail.com", "zguh viqt wuea csam"), 
                     EnableSsl = true,
                 };
-                string koszones = string.IsNullOrWhiteSpace(recipientName) ? "Vásárlónk" : recipientName;
+                //string koszones = string.IsNullOrWhiteSpace(recipientName) ? "Vásárlónk" : recipientName;
                 var mailMessage = new MailMessage
                 {
 
                     From = new MailAddress("poharnok.contact@gmail.com"),
                     Subject = "Kedves ajándék vár a kosaradban!",
                     // Megszólítás beillesztése:
-                    Body = $"Kedves {koszones}!\n\n" +
-                           $"Észrevettük, hogy korábban nálam hagytál egy kosarat. " +
-                           $"Szeretnénk segíteni a döntésben, ezért készítettünk neked egy 1500-as ajándékkártyát.\n\n" +
+                    Body = $"Kedves {keresztnev}!\n\n" +
+                           $"Észrevettük, hogy korábban nálunk hagytál egy kosarat. " +
+                           $"Szeretnénk segíteni a döntésben, ezért készítettünk neked egy 1500 Forintos ajándékkártyát.\n\n" +
                            $"A kódod: {cardCode}\n\n" +
-                           "Használd egészséggel a checkoutnál!",
+                           "Használd egészséggel a checkoutnál,\n" +
+                           "Üdvözlettel a Pohárnok csapata :)",
                     IsBodyHtml = false,
                 };
 
@@ -172,7 +173,7 @@ namespace poharnok_client_application
 
             foreach (var item in lista.Where(x => x.Selected))
             {
-                await CreateGiftCardAsync(item.Email, item.Nev);
+                await CreateGiftCardAsync(item.Email, item.Keresztnev);
             }
 
             MessageBox.Show("Ajándékkártyák generálva és kiküldve!");
@@ -241,11 +242,13 @@ namespace poharnok_client_application
 
             // Dátum szûrés (DateTimePicker használata ajánlott: dtpDate)
             DateTime minDatum = dateTimePicker1.Value.Date;
+            DateTime maxDatum = dateTimePicker2.Value.Date;
 
             var szurtLista = _mindenAdat.Where(x =>
                 x.Email.ToLower().Contains(emailSzuro) &&
                 x.Osszeg >= minAr &&
-                x.Frissitve.Date >= minDatum
+                x.Frissitve.Date >= minDatum &&
+                x.Frissitve.Date <= maxDatum
             ).ToList();
 
             dgvOrders.DataSource = szurtLista;
@@ -289,7 +292,13 @@ namespace poharnok_client_application
             ApplyFilters();
         }
 
+
+
         private void textBoxFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilters();
+        }
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
         {
             ApplyFilters();
         }
@@ -299,5 +308,7 @@ namespace poharnok_client_application
             dateTimePicker1.Value = DateTime.Now.AddDays(-7);
             dateTimePicker2.Value = DateTime.Now;
         }
+
+        
     }
 }

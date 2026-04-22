@@ -14,6 +14,7 @@ namespace poharnok_client_application
         public long Azonosito { get; set; }
         public string Email { get; set; }
         public string Nev { get; set; }
+        public string Keresztnev { get; set; } // Ez kell az emailhez
         public decimal Osszeg { get; set; }
         public DateTime Frissitve { get; set; } // Szűréshez és megjelenítéshez
     }
