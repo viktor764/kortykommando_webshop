@@ -33,7 +33,7 @@ namespace poharnok_client_application
 
                     if (response?.Content != null)
                     {
-                        // Itt történik a varázslat: kiválogatjuk, mit akarunk látni
+                        
                         var megjelenitendoAdatok = response.Content.Where(o => o.IsPlaced == false && !string.IsNullOrEmpty(o.UserEmail))
 
                             .Select(o => new
@@ -43,7 +43,7 @@ namespace poharnok_client_application
                                 RendelesSzam = o.OrderNumber,
                                 Email = o.UserEmail,
                                 Osszeg = o.TotalGrand,
-                                // Itt "nyitjuk ki" a DTO-t:
+                                
                                 Varos = o.BillingAddress?.City ?? "Nincs megadva",
                                 Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}"
                             }).ToList();
@@ -53,8 +53,6 @@ namespace poharnok_client_application
                         dgvOrders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                     }
 
-
-                    //uj resz TESZT
                     if (response?.Content != null)
                     {
                         _mindenAdat = response.Content
@@ -173,7 +171,7 @@ namespace poharnok_client_application
 
             button2.Enabled = false;
 
-            // 1. Összes létezõ kártya lekérése az API-tól [cite: 207]
+            // 1. Összes létezõ kártya lekérése az API-tól
             var letezoKartyak = await GetExistingGiftCardsAsync();
 
             int elküldve = 0;
@@ -208,7 +206,6 @@ namespace poharnok_client_application
             {
                 try
                 {
-                    // GiftCardRoot-ot kérünk le List helyett
                     var response = await client.GetFromJsonAsync<GiftCardRoot>(url);
                     return response?.Content ?? new List<GiftCardDTO>();
                 }
