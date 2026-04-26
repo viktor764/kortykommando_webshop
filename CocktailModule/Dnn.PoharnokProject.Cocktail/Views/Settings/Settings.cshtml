@@ -1,0 +1,30 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<dynamic>
+@using System.Web.Mvc
+
+<h2 id="dnnSitePanel-BasicSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded">Koktél Recept Beállítások</a></h2>
+<fieldset>
+    <div class="dnnFormItem">
+        <p>Válaszd ki azt a maximum 5 Hotcakes kategóriát, amiből a vásárlók összeállíthatják a koktélt!</p>
+    </div>
+
+    @for (int i = 1; i <= 5; i++)
+    {
+        var currentValue = ViewData["Cat" + i] as string;
+
+        <div class="dnnFormItem">
+            <div class="dnnLabel" style="position: relative;">
+                <label class="col-md-2 control-label">@i. Összetevő kategória:</label>
+            </div>
+
+            @* Bolondbiztos tiszta HTML legördülő menü *@
+            <select name="cat@(i)" class="form-control">
+               @foreach (var category in (IEnumerable<System.Web.Mvc.SelectListItem>)ViewBag.Categories)
+                {
+                    <option value="@category.Value" selected="@(category.Value == currentValue ? "selected" : null)">
+                        @category.Text
+                    </option>
+                }
+            </select>
+        </div>
+    }
+</fieldset>
