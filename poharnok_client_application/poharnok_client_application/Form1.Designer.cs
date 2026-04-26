@@ -91,7 +91,7 @@
             dgvOrders.Location = new Point(10, 145);
             dgvOrders.Name = "dgvOrders";
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(881, 236);
+            dgvOrders.Size = new Size(990, 236);
             dgvOrders.TabIndex = 1;
             dgvOrders.CellValueChanged += dgvOrders_CellValueChanged;
             dgvOrders.CurrentCellDirtyStateChanged += dgvOrders_CurrentCellDirtyStateChanged;
@@ -119,7 +119,7 @@
             textBoxFilter.Margin = new Padding(3, 4, 3, 4);
             textBoxFilter.Name = "textBoxFilter";
             textBoxFilter.PlaceholderText = "példa@gmail.com";
-            textBoxFilter.Size = new Size(304, 36);
+            textBoxFilter.Size = new Size(413, 36);
             textBoxFilter.TabIndex = 3;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
             // 
@@ -160,7 +160,7 @@
             textBoxPrice.BackColor = Color.White;
             textBoxPrice.BorderStyle = BorderStyle.FixedSingle;
             textBoxPrice.Font = new Font("Segoe UI", 13F);
-            textBoxPrice.Location = new Point(451, 37);
+            textBoxPrice.Location = new Point(560, 37);
             textBoxPrice.Margin = new Padding(3, 4, 3, 4);
             textBoxPrice.Name = "textBoxPrice";
             textBoxPrice.PlaceholderText = "2000 Ft";
@@ -174,7 +174,7 @@
             dateTimePicker1.CalendarMonthBackground = Color.WhiteSmoke;
             dateTimePicker1.Font = new Font("Segoe UI", 13F);
             dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(586, 37);
+            dateTimePicker1.Location = new Point(695, 37);
             dateTimePicker1.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(150, 36);
@@ -186,7 +186,7 @@
             dateTimePicker2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker2.Font = new Font("Segoe UI", 13F);
             dateTimePicker2.Format = DateTimePickerFormat.Short;
-            dateTimePicker2.Location = new Point(742, 37);
+            dateTimePicker2.Location = new Point(851, 37);
             dateTimePicker2.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker2.Name = "dateTimePicker2";
             dateTimePicker2.Size = new Size(150, 36);
@@ -197,7 +197,7 @@
             // 
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
-            label3.Location = new Point(451, 13);
+            label3.Location = new Point(560, 13);
             label3.Name = "label3";
             label3.Size = new Size(121, 20);
             label3.TabIndex = 10;
@@ -207,7 +207,7 @@
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Location = new Point(586, 13);
+            label4.Location = new Point(695, 13);
             label4.Name = "label4";
             label4.Size = new Size(98, 20);
             label4.TabIndex = 11;
@@ -217,7 +217,7 @@
             // 
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5.AutoSize = true;
-            label5.Location = new Point(742, 13);
+            label5.Location = new Point(851, 13);
             label5.Name = "label5";
             label5.Size = new Size(96, 20);
             label5.TabIndex = 12;
@@ -228,7 +228,7 @@
             checkBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             checkBox1.AutoSize = true;
             checkBox1.FlatStyle = FlatStyle.Flat;
-            checkBox1.Location = new Point(684, 112);
+            checkBox1.Location = new Point(793, 112);
             checkBox1.Margin = new Padding(3, 4, 3, 4);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(208, 24);
@@ -246,7 +246,7 @@
             dgvGiftCards.Location = new Point(10, 467);
             dgvGiftCards.Name = "dgvGiftCards";
             dgvGiftCards.RowHeadersWidth = 51;
-            dgvGiftCards.Size = new Size(686, 317);
+            dgvGiftCards.Size = new Size(988, 317);
             dgvGiftCards.TabIndex = 15;
             dgvGiftCards.CellFormatting += dgvGiftCards_CellFormatting;
             // 
@@ -255,7 +255,7 @@
             button4.BackColor = Color.FromArgb(154, 116, 116);
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Popup;
-            button4.Location = new Point(7, 405);
+            button4.Location = new Point(10, 407);
             button4.Name = "button4";
             button4.Size = new Size(123, 48);
             button4.TabIndex = 16;
@@ -267,7 +267,7 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(742, 395);
+            label6.Location = new Point(851, 395);
             label6.Name = "label6";
             label6.Size = new Size(96, 20);
             label6.TabIndex = 20;
@@ -277,7 +277,7 @@
             // 
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label7.AutoSize = true;
-            label7.Location = new Point(586, 395);
+            label7.Location = new Point(695, 395);
             label7.Name = "label7";
             label7.Size = new Size(98, 20);
             label7.TabIndex = 19;
@@ -288,7 +288,7 @@
             dateTimePicker3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker3.Font = new Font("Segoe UI", 13F);
             dateTimePicker3.Format = DateTimePickerFormat.Short;
-            dateTimePicker3.Location = new Point(586, 419);
+            dateTimePicker3.Location = new Point(695, 419);
             dateTimePicker3.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker3.Name = "dateTimePicker3";
             dateTimePicker3.Size = new Size(150, 36);
@@ -300,7 +300,7 @@
             dateTimePicker4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker4.Font = new Font("Segoe UI", 13F);
             dateTimePicker4.Format = DateTimePickerFormat.Short;
-            dateTimePicker4.Location = new Point(742, 419);
+            dateTimePicker4.Location = new Point(851, 419);
             dateTimePicker4.Margin = new Padding(3, 4, 3, 4);
             dateTimePicker4.Name = "dateTimePicker4";
             dateTimePicker4.Size = new Size(149, 36);
@@ -320,10 +320,9 @@
             // 
             // label8
             // 
-            label8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(703, 552);
+            label8.Location = new Point(146, 401);
             label8.Name = "label8";
             label8.Size = new Size(188, 56);
             label8.TabIndex = 22;
@@ -344,7 +343,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LavenderBlush;
-            ClientSize = new Size(901, 796);
+            ClientSize = new Size(1010, 796);
             Controls.Add(label9);
             Controls.Add(label8);
             Controls.Add(cmbAmount);

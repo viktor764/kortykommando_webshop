@@ -18,12 +18,10 @@ namespace poharnok_client_application
             UpdateButtonState();
             cmbAmount.Items.AddRange(new object[] { 500, 1500, 3000, 5000 });
             cmbAmount.SelectedIndex = 1; // Alapértelmezett az 1500
-            
-
-
 
         }
         private List<OrderDisplayModel> _mindenAdat = new List<OrderDisplayModel>();
+        private bool _allSelected = false; // Segédváltozó az állapot követéséhez
 
         private async void button1_Click(object sender, EventArgs e)
         {
@@ -34,28 +32,6 @@ namespace poharnok_client_application
                 try
                 {
                     var response = await client.GetFromJsonAsync<OrderRoot>(apiUrl);
-
-                    if (response?.Content != null)
-                    {
-
-                        var megjelenitendoAdatok = response.Content.Where(o => o.IsPlaced == false && !string.IsNullOrEmpty(o.UserEmail))
-
-                            .Select(o => new
-                            {
-                                Azonosito = o.Id,
-                                Bvin = o.bvin,
-                                RendelesSzam = o.OrderNumber,
-                                Email = o.UserEmail,
-                                Osszeg = o.TotalGrand,
-
-                                Varos = o.BillingAddress?.City ?? "Nincs megadva",
-                                Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}"
-                            }).ToList();
-
-                        dgvOrders.DataSource = megjelenitendoAdatok;
-                        UpdateButtonState();
-                        dgvOrders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    }
 
                     if (response?.Content != null)
                     {
@@ -73,7 +49,6 @@ namespace poharnok_client_application
                                 Frissitve = ParseJsonDate(o.LastUpdatedUtc)
 
                             }).ToList();
-
                         dgvOrders.DataSource = _mindenAdat;
                         UpdateButtonState();
                     }
@@ -84,10 +59,6 @@ namespace poharnok_client_application
                 }
             }
             ApplyFilters();
-            if (dgvOrders.Columns["Osszeg"] != null)
-            {
-                dgvOrders.Columns["Osszeg"].DefaultCellStyle.Format = "N0";
-            }
 
         }
 
@@ -277,6 +248,7 @@ namespace poharnok_client_application
             DateTime minDatum = dateTimePicker1.Value.Date;
             DateTime maxDatum = dateTimePicker2.Value.Date;
 
+
             var szurtLista = _mindenAdat.Where(x =>
                 x.Email.ToLower().Contains(emailSzuro) &&
                 x.Osszeg >= minAr &&
@@ -285,11 +257,31 @@ namespace poharnok_client_application
             ).ToList();
 
             dgvOrders.DataSource = szurtLista;
+            
+            dgvOrders.Columns["Kijelolve"].Width = 80;
+            dgvOrders.Columns["Kijelolve"].HeaderText = "Kijelölve";
+
+            dgvOrders.Columns["Nev"].Width = 120;
+            dgvOrders.Columns["Nev"].HeaderText = "Név";
+
+            dgvOrders.Columns["Azonosito"].Width = 65;
+            dgvOrders.Columns["Azonosito"].HeaderText = "ID";
+
+            dgvOrders.Columns["Keresztnev"].Visible = false;
+            dgvOrders.Columns["Keresztnev"].HeaderText = "Keresztnév";
+
+            dgvOrders.Columns["Osszeg"].Width = 90;
+            dgvOrders.Columns["Osszeg"].HeaderText = "Összeg";
+            dgvOrders.Columns["Osszeg"].DefaultCellStyle.Format = "N0";
+
+            dgvOrders.Columns["Frissitve"].Width = 150;
+            dgvOrders.Columns["Frissitve"].HeaderText = "Frissítve";
+
+            dgvOrders.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvOrders.Columns["Email"].MinimumWidth = 200;
+
             UpdateButtonState();
         }
-
-
-        private bool _allSelected = false; // Segédváltozó az állapot követéséhez
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -350,15 +342,22 @@ namespace poharnok_client_application
             if (dgvGiftCards.Columns["Osszeg"] != null)
             {
                 dgvGiftCards.Columns["Osszeg"].DefaultCellStyle.Format = "N0";
+                dgvGiftCards.Columns["Osszeg"].Width = 90;
+                dgvGiftCards.Columns["Osszeg"].HeaderText = "Összeg";
             }
 
             if (dgvGiftCards.Columns["Elhasznalt"] != null)
             {
                 dgvGiftCards.Columns["Elhasznalt"].DefaultCellStyle.Format = "N0";
-            }
+                dgvGiftCards.Columns["Elhasznalt"].Width = 80;
+                dgvGiftCards.Columns["Elhasznalt"].HeaderText = "Elhasznált";
+                dgvGiftCards.Columns["Kartyaszam"].HeaderText = "Kupon";
+                dgvGiftCards.Columns["Kartyaszam"].Width = 260;
 
-            decimal osszesenElhasznalt = szurt.Sum(x => x.Elhasznalt);
-            label8.Text = $"Összes kedvezmény:\n{osszesenElhasznalt:N0} Ft";
+
+                dgvGiftCards.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgvGiftCards.Columns["Email"].MinimumWidth = 180;
+            }
 
             // Dátum formátum beállítása a táblázatban
             if (dgvGiftCards.Columns["Datum"] != null)
@@ -366,6 +365,9 @@ namespace poharnok_client_application
                 dgvGiftCards.Columns["Datum"].DefaultCellStyle.Format = "yyyy.MM.dd. HH:mm";
                 dgvGiftCards.Columns["Datum"].HeaderText = "Létrehozva";
             }
+
+            decimal osszesenElhasznalt = szurt.Sum(x => x.Elhasznalt);
+            label8.Text = $"Összes kedvezmény:\n{osszesenElhasznalt:N0} Ft";
         }
 
         private void textBoxPrice_TextChanged(object sender, EventArgs e)
