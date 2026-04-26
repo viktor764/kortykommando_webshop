@@ -73,11 +73,11 @@ namespace poharnok_client_application
     }
     public class GiftCardDisplayModel
     {
-        public string Kártyaszám { get; set; }
-        public decimal Összeg { get; set; }
-        public decimal Elhasznált { get; set; }
+        public string Kartyaszam { get; set; }
+        public decimal Osszeg { get; set; }
+        public decimal Elhasznalt { get; set; }
         public string Email { get; set; }
-        public DateTime Létrehozva { get; set; } // Valódi DateTime a szűréshez
+        public DateTime Datum { get; set; } // Itt már valódi dátum van!
     }
 
     public class GiftCardRoot

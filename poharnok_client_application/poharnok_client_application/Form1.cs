@@ -33,7 +33,7 @@ namespace poharnok_client_application
 
                     if (response?.Content != null)
                     {
-                        
+
                         var megjelenitendoAdatok = response.Content.Where(o => o.IsPlaced == false && !string.IsNullOrEmpty(o.UserEmail))
 
                             .Select(o => new
@@ -43,7 +43,7 @@ namespace poharnok_client_application
                                 RendelesSzam = o.OrderNumber,
                                 Email = o.UserEmail,
                                 Osszeg = o.TotalGrand,
-                                
+
                                 Varos = o.BillingAddress?.City ?? "Nincs megadva",
                                 Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}"
                             }).ToList();
@@ -80,7 +80,10 @@ namespace poharnok_client_application
                 }
             }
             ApplyFilters();
-
+            if (dgvOrders.Columns["Osszeg"] != null)
+            {
+                dgvOrders.Columns["Osszeg"].DefaultCellStyle.Format = "N0";
+            }
 
         }
 
@@ -171,7 +174,7 @@ namespace poharnok_client_application
 
             button2.Enabled = false;
 
-            // 1. Összes létezõ kártya lekérése az API-tól
+            // Összes létezõ kártya lekérése az API-tól
             var letezoKartyak = await GetExistingGiftCardsAsync();
 
             int elküldve = 0;
@@ -179,7 +182,7 @@ namespace poharnok_client_application
 
             foreach (var item in lista.Where(x => x.Kijelolve))
             {
-                // 2. Ellenõrzés a letöltött listában
+                // Ellenõrzés a listában
                 bool marVanNeki = letezoKartyak.Any(c =>
                     c.RecipientEmail?.ToLower() == item.Email.ToLower());
 
@@ -251,8 +254,8 @@ namespace poharnok_client_application
                 };
 
                 var response = await client.PostAsJsonAsync(url, newCard);
-        
-        if (response.IsSuccessStatusCode)
+
+                if (response.IsSuccessStatusCode)
                 {
                     // Az emailnek is átadjuk az összeget
                     SendEmailWithGiftCard(email, nev, newCard.CardNumber, amount);
@@ -308,31 +311,58 @@ namespace poharnok_client_application
             button3.Text = _allSelected ? "Mind eltávolítása" : "Mind kijelölése";
         }
 
+        private List<GiftCardDisplayModel> _osszesGiftCard = new List<GiftCardDisplayModel>();
+
         private async void RefreshGiftCardTable()
         {
-            var kartyak = await GetExistingGiftCardsAsync(); // [cite: 216]
+            var apiValasz = await GetExistingGiftCardsAsync(); // [cite: 207]
 
-            dgvGiftCards.DataSource = null;
-            dgvGiftCards.DataSource = kartyak;
-
-            // Oszlopok elrejtése név alapján
-            string[] elrejtendo = { "StoreId", "RecipientName", "Enabled" };
-
-            foreach (string colName in elrejtendo)
+            // Konvertáljuk a csúnya stringeket szép objektumokká
+            _osszesGiftCard = apiValasz.Select(c => new GiftCardDisplayModel
             {
-                if (dgvGiftCards.Columns[colName] != null)
-                {
-                    dgvGiftCards.Columns[colName].Visible = false;
-                }
-            }
+                Kartyaszam = c.CardNumber,
+                Osszeg = c.Amount,
+                Elhasznalt = c.UsedAmount,
+                Email = c.RecipientEmail,
+                // Itt hívjuk meg a korábban megírt ParseJsonDate-et
+                Datum = ParseJsonDate(c.IssueDateUtc)
+            }).ToList();
 
-            // Opcionális: A maradék oszlopok szebb elnevezése
-            if (dgvGiftCards.Columns["CardNumber"] != null) dgvGiftCards.Columns["CardNumber"].HeaderText = "Kártyaszám";
-            if (dgvGiftCards.Columns["Amount"] != null) dgvGiftCards.Columns["Amount"].HeaderText = "Összeg";
-            if (dgvGiftCards.Columns["UsedAmount"] != null) dgvGiftCards.Columns["UsedAmount"].HeaderText = "Elhasznált";
-            if (dgvGiftCards.Columns["RecipientEmail"] != null) dgvGiftCards.Columns["RecipientEmail"].HeaderText = "Vevõ Email";
+            ApplyGiftCardFilters();
         }
 
+        private void ApplyGiftCardFilters()
+        {
+            // A dateTimePicker3 és 4 használata a szûréshez
+            DateTime mettol = dateTimePicker3.Value.Date;
+            DateTime meddig = dateTimePicker4.Value.Date.AddDays(1).AddSeconds(-1); // A nap végéig
+
+            var szurt = _osszesGiftCard
+                .Where(x => x.Datum >= mettol && x.Datum <= meddig)
+                .ToList();
+
+            dgvGiftCards.DataSource = null;
+            dgvGiftCards.DataSource = szurt;
+            if (dgvGiftCards.Columns["Osszeg"] != null)
+            {
+                dgvGiftCards.Columns["Osszeg"].DefaultCellStyle.Format = "N0";
+            }
+
+            if (dgvGiftCards.Columns["Elhasznalt"] != null)
+            {
+                dgvGiftCards.Columns["Elhasznalt"].DefaultCellStyle.Format = "N0";
+            }
+
+            decimal osszesenElhasznalt = szurt.Sum(x => x.Elhasznalt);
+            label8.Text = $"Összes kedvezmény:\n{osszesenElhasznalt:N0} Ft";
+
+            // Dátum formátum beállítása a táblázatban
+            if (dgvGiftCards.Columns["Datum"] != null)
+            {
+                dgvGiftCards.Columns["Datum"].DefaultCellStyle.Format = "yyyy.MM.dd. HH:mm";
+                dgvGiftCards.Columns["Datum"].HeaderText = "Létrehozva";
+            }
+        }
 
         private void textBoxPrice_TextChanged(object sender, EventArgs e)
         {
@@ -375,27 +405,41 @@ namespace poharnok_client_application
 
         private void dgvGiftCards_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            // Csak sorokra nézzük, a fejlécet hagyjuk békén
+            // Csak a sorokra figyelünk, a fejlécet kihagyjuk
             if (e.RowIndex < 0) return;
 
-            // Megkeressük az "UsedAmount" oszlopot 
             var row = dgvGiftCards.Rows[e.RowIndex];
-            var usedAmountVal = row.Cells["UsedAmount"].Value;
 
-            if (usedAmountVal != null && decimal.TryParse(usedAmountVal.ToString(), out decimal usedAmount))
+            // FONTOS: Az oszlop neve most már "Elhasznalt", mert a GiftCardDisplayModel-ben így neveztük el!
+            if (dgvGiftCards.Columns["Elhasznalt"] != null)
             {
-                // Ha elhasználtak belõle bármennyit (> 0) 
-                if (usedAmount > 0)
+                var usedAmountVal = row.Cells["Elhasznalt"].Value;
+
+                if (usedAmountVal != null && decimal.TryParse(usedAmountVal.ToString(), out decimal usedAmount))
                 {
-                    row.DefaultCellStyle.BackColor = Color.LightGreen;
-                    row.DefaultCellStyle.SelectionBackColor = Color.Green; // Kijelölve is maradjon zöldes
-                }
-                else
-                {
-                    // Visszaállítás alaphelyzetbe (fontos a görgetés miatt)
-                    row.DefaultCellStyle.BackColor = Color.White;
+                    // Ha az elhasznált összeg nagyobb, mint 0 
+                    if (usedAmount > 0)
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightGreen;
+                        row.DefaultCellStyle.SelectionBackColor = Color.Green;
+                    }
+                    else
+                    {
+                        // Alaphelyzet visszaállítása (a virtuális megjelenítés miatt kötelezõ)
+                        row.DefaultCellStyle.BackColor = Color.White;
+                        row.DefaultCellStyle.SelectionBackColor = SystemColors.Highlight;
+                    }
                 }
             }
+        }
+        private void dateTimePicker3_ValueChanged(object sender, EventArgs e)
+        {
+            ApplyGiftCardFilters();
+        }
+
+        private void dateTimePicker4_ValueChanged(object sender, EventArgs e)
+        {
+            ApplyGiftCardFilters();
         }
     }
 }
