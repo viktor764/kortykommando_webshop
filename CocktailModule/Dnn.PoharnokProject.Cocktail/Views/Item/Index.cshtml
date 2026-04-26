@@ -250,7 +250,7 @@
                 // ITT A VARÁZSLAT: Ha a státusz 200 (OK), az azt jelenti, hogy a szerver
                 // megcsinálta a feladatot, csak a válasz formátuma (parse error) zavarta meg a jQuery-t.
                 if (xhr.status === 200) {
-                    window.location.href = '/kosar'; // Irány a kosár!
+                    window.location.href = '/HotcakesStore/Cart'; // Irány a kosár!
                 } else {
                     alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
                     console.log("Hiba részletei:", textStatus, errorThrown);
