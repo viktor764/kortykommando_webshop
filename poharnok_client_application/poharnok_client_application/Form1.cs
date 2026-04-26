@@ -18,6 +18,10 @@ namespace poharnok_client_application
             UpdateButtonState();
             cmbAmount.Items.AddRange(new object[] { 500, 1500, 3000, 5000 });
             cmbAmount.SelectedIndex = 1; // Alapértelmezett az 1500
+            
+
+
+
         }
         private List<OrderDisplayModel> _mindenAdat = new List<OrderDisplayModel>();
 
