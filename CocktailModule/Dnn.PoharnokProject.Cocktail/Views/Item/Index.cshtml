@@ -266,13 +266,21 @@
                 data: { productIds: selectedIds },
                 dataType: "json",
                 success: function (response) {
-                    if (response.success) {
-                        window.location.href = '/cart';
-                    } else {
-                        alert("Hiba: " + response.message);
-                        btn.disabled = false;
-                        btn.innerText = "Csomag a kosárba";
-                    }
+                    console.log("AddToCart response:", response);
+                    alert(JSON.stringify(response, null, 2));
+
+                    btn.disabled = false;
+                    btn.innerText = "Csomag a kosárba";
+
+                    // IDEIGLENESEN NE IRÁNYÍTSUK ÁT:
+
+                    //if (response.success) {
+                    //    window.location.href = '/HotcakesStore/Cart';
+                    //} else {
+                    //    alert("Hiba: " + response.message);
+                    //    btn.disabled = false;
+                    //    btn.innerText = "Csomag a kosárba";
+                    //}
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     if (xhr.status === 200) {
