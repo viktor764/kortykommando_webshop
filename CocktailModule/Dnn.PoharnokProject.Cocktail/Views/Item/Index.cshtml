@@ -259,9 +259,13 @@
             btn.disabled = true;
             btn.innerText = "Hozzáadás...";
 
+            // 1. LÉPÉS: DNN Services Framework példányosítása az aktuális modul ID-val
+            const sf = $.ServicesFramework(modId);
+
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddToCart", "Item")',
+                beforeSend: sf.setModuleHeaders, // 2. LÉPÉS: Ez a kulcs! Automatikusan beteszi a TabId, ModuleId és Token fejléceket.
                 traditional: true,
                 data: { productIds: selectedIds },
                 dataType: "json",
@@ -275,6 +279,7 @@
                     }
                 },
                 error: function (xhr, textStatus, errorThrown) {
+                    // ... a hibakezelésed marad a régi
                     if (xhr.status === 200) {
                         window.location.href = '/HotcakesStore/Cart';
                     } else {

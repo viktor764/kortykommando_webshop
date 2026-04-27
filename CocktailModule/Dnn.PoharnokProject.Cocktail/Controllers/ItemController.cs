@@ -83,9 +83,13 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         [ModuleAction(ControlKey = "Edit", TitleKey = "AddItem")]
         public ActionResult Index()
         {
+            // Biztosítjuk, hogy a DNN AJAX és biztonsági JS objektumai betöltődjenek
+            DotNetNuke.Framework.JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+
             // 1. Hotcakes inicializálása
             var hccApp = new Hotcakes.Commerce.HotcakesApplication(Hotcakes.Commerce.HccRequestContext.Current);
             var model = new List<IngredientCategoryViewModel>();
+
 
             for (int i = 1; i <= 5; i++)
             {
@@ -133,6 +137,7 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         }
 
         [HttpPost]
+        [DotNetNuke.Web.Mvc.Framework.ActionFilters.ValidateAntiForgeryToken] // Így már érteni fogja a fordító!
         public JsonResult AddToCart(List<string> productIds)
         {
             try
