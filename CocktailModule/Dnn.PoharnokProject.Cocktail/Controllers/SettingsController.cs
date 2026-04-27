@@ -1,18 +1,10 @@
-﻿/*
-' Copyright (c) 2026 KortyKommando
-'  All rights reserved.
-*/
-
-using DotNetNuke.Web.Mvc.Framework.Controllers;
-using DotNetNuke.Collections;
+﻿using DotNetNuke.Web.Mvc.Framework.Controllers;
 using System.Web.Mvc;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Mvc.Framework.ActionFilters;
-using System;
 using System.Linq;
 using DotNetNuke.Entities.Modules;
-using Hotcakes.Commerce;
-using Hotcakes.Commerce.Dnn.Utils; // Ez kell a Hotcakes App eléréséhez
+using DotNetNuke.Collections;
 
 namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
 {
@@ -23,44 +15,58 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         [HttpGet]
         public ActionResult Settings()
         {
-            // 1. Hotcakes inicializálása
             var hccApp = new Hotcakes.Commerce.HotcakesApplication(Hotcakes.Commerce.HccRequestContext.Current);
-
-            // 2. Kategóriák lekérése a Hotcakes-ből
             var allCategories = hccApp.CatalogServices.Categories.FindAll()
                                       .Select(c => new SelectListItem
                                       {
                                           Text = c.Name,
-                                          Value = c.Bvin // A Bvin a Hotcakes egyedi azonosítója
+                                          Value = c.Bvin
                                       }).ToList();
 
-            // Üres opció hozzáadása az elejére
-            allCategories.Insert(0, new SelectListItem { Text = "-- Válassz kategóriát --", Value = "" });
-
-            // Átadjuk a listát a nézetnek
+            // AZ ÜRES OPCIÓ ÉRTÉKE MOSTANTÓL "-1"
+            allCategories.Insert(0, new SelectListItem { Text = "-- Válassz kategóriát --", Value = "-1" });
             ViewBag.Categories = allCategories;
 
-            // 3. Korábban elmentett beállítások betöltése a DNN-ből
-            ViewBag.Cat1 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat1", "");
-            ViewBag.Cat2 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat2", "");
-            ViewBag.Cat3 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat3", "");
-            ViewBag.Cat4 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat4", "");
-            ViewBag.Cat5 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat5", "");
+            // Betöltéskor is a "-1" az alapértelmezett
+            ViewBag.Cat1 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat1", "-1");
+            ViewBag.Cat2 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat2", "-1");
+            ViewBag.Cat3 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat3", "-1");
+            ViewBag.Cat4 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat4", "-1");
+            ViewBag.Cat5 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat5", "-1");
 
             return View();
         }
 
         [HttpPost]
-        [ValidateInput(false)]
         [DotNetNuke.Web.Mvc.Framework.ActionFilters.ValidateAntiForgeryToken]
-        public ActionResult Settings(string cat1, string cat2, string cat3, string cat4, string cat5)
+        public ActionResult Settings(FormCollection collection)
         {
-            // 4. A kiválasztott Kategória ID-k (Bvin) mentése a DNN ModuleSettings-be
-            ModuleController.Instance.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat1", cat1);
-            ModuleController.Instance.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat2", cat2);
-            ModuleController.Instance.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat3", cat3);
-            ModuleController.Instance.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat4", cat4);
-            ModuleController.Instance.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat5", cat5);
+            // 1. LÉPÉS: Ellenőrizzük, hogy egyáltalán jött-e adat
+            if (collection == null) return RedirectToDefaultRoute();
+
+            var mc = ModuleController.Instance;
+
+            for (int i = 1; i <= 5; i++)
+            {
+                // Keressük a sima "cat1", "cat2"... neveket
+                string value = collection["cat" + i];
+
+                // Ha üres vagy "-1", akkor töröljük a beállítást
+                if (string.IsNullOrEmpty(value) || value == "-1")
+                {
+                    mc.DeleteModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat" + i);
+                    mc.DeleteTabModuleSetting(ModuleContext.TabModuleId, "Cocktail_Cat" + i);
+                }
+                else
+                {
+                    // Ha van érték, RÁMENTÜNK mindkét szintre, hogy biztosan felülírja a régit
+                    mc.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat" + i, value);
+                    mc.UpdateTabModuleSetting(ModuleContext.TabModuleId, "Cocktail_Cat" + i, value);
+                }
+            }
+
+            // 2. LÉPÉS: Kényszerített gyorstár ürítés
+            DotNetNuke.Common.Utilities.DataCache.ClearModuleCache(ModuleContext.TabId);
 
             return RedirectToDefaultRoute();
         }

@@ -29,13 +29,12 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
     [DnnHandleError]
     public class ItemController : DnnController
     {
-
         public ActionResult Delete(int itemId)
         {
             ItemManager.Instance.DeleteItem(itemId, ModuleContext.ModuleId);
             return RedirectToDefaultRoute();
         }
-         
+
         public ActionResult Edit(int itemId = -1)
         {
             DotNetNuke.Framework.JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.DnnPlugins);
@@ -90,19 +89,17 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
 
             for (int i = 1; i <= 5; i++)
             {
-                // Kiolvassuk a mentett kategória ID-t
-                var catId = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat" + i, "");
+                // "NONE" az alapértelmezett érték, ha nincs beállítva semmi
+                var catId = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat" + i, "NONE");
 
-                if (!string.IsNullOrEmpty(catId))
+                // Csak akkor töltjük be a kategóriát, ha NEM "NONE"
+                if (!string.IsNullOrEmpty(catId) && catId != "NONE")
                 {
                     var category = hccApp.CatalogServices.Categories.Find(catId);
                     if (category != null)
                     {
-                        int totalCount = 0;
-
-                        // 1. Lépés: Kategória-Termék összerendelések lekérése (A "B-Terv" varázslata)
+                        // 1. Lépés: Kategória-Termék összerendelések lekérése
                         var crossRefs = hccApp.CatalogServices.CategoriesXProducts.FindForCategory(catId, 1, 100);
-
                         var products = new List<Product>();
 
                         if (crossRefs != null)
@@ -112,7 +109,6 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
                             {
                                 var p = hccApp.CatalogServices.Products.Find(xref.ProductId);
 
-                                // Csak a készleten lévő, elérhető termékeket adjuk hozzá
                                 if (p != null)
                                 {
                                     products.Add(p);
@@ -141,49 +137,34 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         {
             try
             {
-                var hccApp = HotcakesApplication.Current;
+                // Így biztosabb a Hotcakes elérése
+                var hccApp = new Hotcakes.Commerce.HotcakesApplication(Hotcakes.Commerce.HccRequestContext.Current);
                 var cart = hccApp.OrderServices.CurrentShoppingCart();
 
-                if (productIds == null || !productIds.Any())
-                {
-                    return Json(new { success = false, message = "Nincs kiválasztott termék." });
-                }
-                // Minden kiválasztott elemet hozzáadunk a kosárhoz
-                // Minden kiválasztott elemet hozzáadunk a kosárhoz
+                if (productIds == null || !productIds.Any()) return Json(new { success = false });
+
                 foreach (var bvin in productIds)
                 {
                     var product = hccApp.CatalogServices.Products.Find(bvin);
                     if (product != null)
                     {
-                        // 1. Lépés: A tétel teljes körű manuális létrehozása
                         var li = new Hotcakes.Commerce.Orders.LineItem
                         {
                             ProductId = product.Bvin,
-                            ProductName = product.ProductName,
                             Quantity = 1,
-
-                            // AZ ÁRAZÁS PONTOSÍTÁSA:
-                            BasePricePerItem = product.SitePrice,       // Eredeti alapár
-                            AdjustedPricePerItem = product.SitePrice,   // Megjelenített (kedvezményes) ár
-                            LineTotal = product.SitePrice               // Tétel teljes értéke (mivel 1 db van)
+                            BasePricePerItem = product.SitePrice,
+                            AdjustedPricePerItem = product.SitePrice
                         };
-
-                        // 2. Lépés: Hozzáadás a kosárhoz
                         hccApp.OrderServices.AddItemToOrder(cart, li);
                     }
                 }
-
-                // Kosár frissítése a Hotcakes-ben 
                 hccApp.OrderServices.Orders.Update(cart);
-
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                // Hibaállapot kezelése a terv szerint
-                return Json(new { success = false, message = "Szerver hiba: " + ex.Message });
+                return Json(new { success = false, message = ex.Message });
             }
         }
-
     }
 }
