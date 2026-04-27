@@ -204,7 +204,7 @@
     }
 </div>
 
-<script>
+@*<script>
     // Egy IIFE (Immediately Invoked Function Expression) blokkba zárjuk a logikát.
     // Ezzel a "let" és "const" változók csak ezen a blokkon (azaz modul példányon) belül fognak létezni.
     (function () {
@@ -268,7 +268,7 @@
                 success: function (response) {
                     alert("ADD TO CART JSON:\n" + JSON.stringify(response, null, 2));
                     console.log("AddToCart response:", response);
-
+                    window.location.href = '/HotcakesStore/Cart';
                     btn.disabled = false;
                     btn.innerText = "Csomag a kosárba";
 
@@ -290,5 +290,105 @@
 
         // Inicializálás az oldal betöltésekor
         document.addEventListener("DOMContentLoaded", calculateTotal);
+    })();
+</script>*@
+<script>
+    (function () {
+        const modId = '@modId';
+        const container = document.getElementById('cocktail-module-' + modId);
+
+        let currentPositions = [@string.Join(",", Model.Select(m => "0"))];
+        let maxCounts = [@string.Join(",", Model.Select(m => m.Products.Count))];
+
+        window['slide_' + modId] = function (catIndex, direction) {
+            const cards = container.querySelectorAll('.card-row-' + catIndex);
+
+            if (cards.length > 0) {
+                cards[currentPositions[catIndex]].style.display = 'none';
+                currentPositions[catIndex] =
+                    (currentPositions[catIndex] + direction + maxCounts[catIndex]) % maxCounts[catIndex];
+                cards[currentPositions[catIndex]].style.display = 'flex';
+                calculateTotal();
+            }
+        };
+
+        function calculateTotal() {
+            let total = 0;
+
+            container.querySelectorAll('.product-card').forEach(card => {
+                if (window.getComputedStyle(card).display !== 'none') {
+                    total += parseFloat(card.getAttribute('data-price')) || 0;
+                }
+            });
+
+            const displayEl = container.querySelector('.total-display');
+            if (displayEl) {
+                displayEl.innerText = Math.round(total).toLocaleString('hu-HU') + " Ft";
+            }
+        }
+
+        window['addToCart_' + modId] = function () {
+            const selectedIds = [];
+
+            container.querySelectorAll('.product-card').forEach(card => {
+                if (window.getComputedStyle(card).display !== 'none') {
+                    selectedIds.push(card.getAttribute('data-bvin'));
+                }
+            });
+
+            if (selectedIds.length === 0) {
+                alert("Nincs kiválasztott termék.");
+                return;
+            }
+
+            const btn = container.querySelector('.btnAddToCart');
+            btn.disabled = true;
+            btn.innerText = "Hozzáadás...";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddToCart", "Item")',
+                traditional: true,
+                data: { productIds: selectedIds },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response && response.success) {
+                        window.location.href = '/HotcakesStore/Cart';
+                    } else {
+                        alert("Hiba: " + (response && response.message ? response.message : "Ismeretlen hiba."));
+                        btn.disabled = false;
+                        btn.innerText = "Csomag a kosárba";
+                    }
+                },
+
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log("AJAX status:", xhr.status);
+                    console.log("AJAX textStatus:", textStatus);
+                    console.log("AJAX errorThrown:", errorThrown);
+                    console.log("AJAX responseText:", xhr.responseText);
+
+                    /*
+                       DNN néha 200-as státusszal is error ágba dobhat,
+                       ha a JSON után HTML is visszakerül a válaszba.
+                       Ha a kosárba rakás valójában sikerült, akkor itt is tovább lehet menni.
+                    */
+                    if (xhr.status === 200 && xhr.responseText && xhr.responseText.indexOf('"success":true') !== -1) {
+                        window.location.href = '/HotcakesStore/Cart';
+                        return;
+                    }
+
+                    alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
+                    btn.disabled = false;
+                    btn.innerText = "Csomag a kosárba";
+                }
+            });
+        };
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", calculateTotal);
+        } else {
+            calculateTotal();
+        }
     })();
 </script>

@@ -126,53 +126,29 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         [HttpPost]
         public JsonResult AddToCart(List<string> productIds)
         {
-            var debug = new List<string>();
-
             try
             {
-                debug.Add("AddToCart elindult.");
-
                 var hccApp = new HotcakesApplication(HccRequestContext.Current);
                 var cart = hccApp.OrderServices.EnsureShoppingCart();
 
                 if (cart == null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Az EnsureShoppingCart() után is null a cart.",
-                        debug = debug
-                    });
+                    return Json(new { success = false, message = "Nem sikerült létrehozni a kosarat." });
                 }
-
-                debug.Add("Cart bvin: " + cart.bvin);
-                debug.Add("Cart items before: " + cart.Items.Count);
 
                 if (productIds == null || !productIds.Any())
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Nincs kiválasztott termék.",
-                        debug = debug
-                    });
+                    return Json(new { success = false, message = "Nincs kiválasztott termék." });
                 }
-
-                debug.Add("Kapott productIds count: " + productIds.Count);
 
                 foreach (var bvin in productIds)
                 {
-                    debug.Add("Keresett product bvin: " + bvin);
-
                     var product = hccApp.CatalogServices.Products.Find(bvin);
 
                     if (product == null)
                     {
-                        debug.Add("NEM található termék: " + bvin);
-                        continue;
+                        return Json(new { success = false, message = "Nem található termék: " + bvin });
                     }
-
-                    debug.Add("Talált termék: " + product.ProductName + " | SKU: " + product.Sku + " | Price: " + product.SitePrice);
 
                     var li = new Hotcakes.Commerce.Orders.LineItem
                     {
@@ -187,36 +163,15 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
                     };
 
                     hccApp.OrderServices.AddItemToOrder(cart, li);
-
-                    debug.Add("AddItemToOrder meghívva: " + product.ProductName);
                 }
-
-                debug.Add("Cart items after AddItemToOrder before Update: " + cart.Items.Count);
 
                 hccApp.OrderServices.Orders.Update(cart);
 
-                var cartAfter = hccApp.OrderServices.CurrentShoppingCart();
-
-                debug.Add("Cart items after Update: " + (cartAfter == null ? -1 : cartAfter.Items.Count));
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Diagnosztikai futás kész.",
-                    cartBvin = cart.bvin,
-                    itemCountBefore = cart.Items.Count,
-                    itemCountAfter = cartAfter == null ? -1 : cartAfter.Items.Count,
-                    debug = debug
-                });
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                    debug = debug
-                });
+                return Json(new { success = false, message = "Szerver hiba: " + ex.Message });
             }
         }
 
