@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Dnn.PoharnokProject.Cocktail" type="Module" version="00.00.08">
+    <package name="Dnn.PoharnokProject.Cocktail" type="Module" version="00.00.09">
       <friendlyName>Dnn.PoharnokProject.Cocktail</friendlyName>
       <description>Dnn.PoharnokProject.Cocktail</description>
       <iconFile>~/Icons/Sigma/Software_32X32_Standard.png</iconFile>

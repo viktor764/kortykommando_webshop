@@ -245,7 +245,8 @@
         }
 
         // AJAX kosárba helyezés oldalújratöltés nélkül
-        window['addToCart_' + modId] = function () {
+        window['addToCart_' + modId] = function () { 
+            alert("SERVER VIEW DEBUG 01 - gomb megnyomva");
             const selectedIds = [];
             container.querySelectorAll('.product-card').forEach(card => {
                 if (window.getComputedStyle(card).display !== 'none') {
@@ -258,7 +259,6 @@
             const btn = container.querySelector('.btnAddToCart');
             btn.disabled = true;
             btn.innerText = "Hozzáadás...";
-
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddToCart", "Item")',
@@ -266,31 +266,24 @@
                 data: { productIds: selectedIds },
                 dataType: "json",
                 success: function (response) {
+                    alert("ADD TO CART JSON:\n" + JSON.stringify(response, null, 2));
                     console.log("AddToCart response:", response);
-                    alert(JSON.stringify(response, null, 2));
 
                     btn.disabled = false;
                     btn.innerText = "Csomag a kosárba";
 
-                    // IDEIGLENESEN NE IRÁNYÍTSUK ÁT:
-
-                    //if (response.success) {
-                    //    window.location.href = '/HotcakesStore/Cart';
-                    //} else {
-                    //    alert("Hiba: " + response.message);
-                    //    btn.disabled = false;
-                    //    btn.innerText = "Csomag a kosárba";
-                    //}
+                    return false;
                 },
                 error: function (xhr, textStatus, errorThrown) {
-                    if (xhr.status === 200) {
-                        window.location.href = '/HotcakesStore/Cart';
-                    } else {
-                        alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
-                        console.log("Hiba részletei:", textStatus, errorThrown);
-                        btn.disabled = false;
-                        btn.innerText = "Csomag a kosárba";
-                    }
+                    alert("AJAX ERROR:\n" + xhr.status + "\n" + xhr.responseText.substring(0, 1000));
+
+                    console.log("AJAX status:", xhr.status);
+                    console.log("AJAX responseText:", xhr.responseText);
+
+                    btn.disabled = false;
+                    btn.innerText = "Csomag a kosárba";
+
+                    return false;
                 }
             });
         };
