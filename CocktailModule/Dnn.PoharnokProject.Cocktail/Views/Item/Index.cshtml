@@ -244,53 +244,53 @@
             }
         }
 
-        // AJAX kosárba helyezés oldalújratöltés nélkül
-        window['addToCart_' + modId] = function () {
-            const selectedIds = [];
-            container.querySelectorAll('.product-card').forEach(card => {
-                if (window.getComputedStyle(card).display !== 'none') {
-                    selectedIds.push(card.getAttribute('data-bvin'));
+            // AJAX kosárba helyezés oldalújratöltés nélkül
+    window['addToCart_' + modId] = function () {
+        const selectedIds = [];
+        container.querySelectorAll('.product-card').forEach(card => {
+            if (window.getComputedStyle(card).display !== 'none') {
+                selectedIds.push(card.getAttribute('data-bvin'));
+            }
+        });
+
+        if (selectedIds.length === 0) return;
+
+        const btn = container.querySelector('.btnAddToCart');
+        btn.disabled = true;
+        btn.innerText = "Hozzáadás...";
+
+        const sf = $.ServicesFramework(modId);
+
+        // Kinyerjük a tokent a DNN által generált rejtett mezőből
+        const antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+        $.ajax({
+            type: "POST",
+            url: '@Html.Raw(Url.Action("AddToCart", "Item"))',
+            beforeSend: sf.setModuleHeaders, // Ez maradhat, biztos, ami biztos
+            traditional: true,
+            data: {
+                productIds: selectedIds,
+                __RequestVerificationToken: antiForgeryToken // <-- EZ A KULCS: beletesszük a payloadba!
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = '/HotcakesStore/Cart'; // Vagy az egyedi kosár URL-ed
+                } else {
+                    alert("Hiba: " + response.message);
+                    btn.disabled = false;
+                    btn.innerText = "Csomag a kosárba";
                 }
-            });
-
-            if (selectedIds.length === 0) return;
-
-            const btn = container.querySelector('.btnAddToCart');
-            btn.disabled = true;
-            btn.innerText = "Hozzáadás...";
-
-            // 1. LÉPÉS: DNN Services Framework példányosítása az aktuális modul ID-val
-            const sf = $.ServicesFramework(modId);
-
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddToCart", "Item")',
-                beforeSend: sf.setModuleHeaders, // 2. LÉPÉS: Ez a kulcs! Automatikusan beteszi a TabId, ModuleId és Token fejléceket.
-                traditional: true,
-                data: { productIds: selectedIds },
-                dataType: "json",
-                success: function (response) {
-                    if (response.success) {
-                        window.location.href = '/cart';
-                    } else {
-                        alert("Hiba: " + response.message);
-                        btn.disabled = false;
-                        btn.innerText = "Csomag a kosárba";
-                    }
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    // ... a hibakezelésed marad a régi
-                    if (xhr.status === 200) {
-                        window.location.href = '/HotcakesStore/Cart';
-                    } else {
-                        alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
-                        console.log("Hiba részletei:", textStatus, errorThrown);
-                        btn.disabled = false;
-                        btn.innerText = "Csomag a kosárba";
-                    }
-                }
-            });
-        };
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
+                console.log("Hiba részletei:", textStatus, errorThrown);
+                btn.disabled = false;
+                btn.innerText = "Csomag a kosárba";
+            }
+        });
+    };
 
         // Inicializálás az oldal betöltésekor
         document.addEventListener("DOMContentLoaded", calculateTotal);
