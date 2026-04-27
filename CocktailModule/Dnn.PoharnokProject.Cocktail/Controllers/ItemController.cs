@@ -137,11 +137,14 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         {
             try
             {
-                // Így biztosabb a Hotcakes elérése
-                var hccApp = new Hotcakes.Commerce.HotcakesApplication(Hotcakes.Commerce.HccRequestContext.Current);
+                // EZ A LEGBIZTOSABB SZERVER OLDALON:
+                var hccContext = Hotcakes.Commerce.HccRequestContext.Current;
+                var hccApp = new Hotcakes.Commerce.HotcakesApplication(hccContext);
+
                 var cart = hccApp.OrderServices.CurrentShoppingCart();
 
-                if (productIds == null || !productIds.Any()) return Json(new { success = false });
+                if (productIds == null || !productIds.Any())
+                    return Json(new { success = false, message = "Üres lista" });
 
                 foreach (var bvin in productIds)
                 {
