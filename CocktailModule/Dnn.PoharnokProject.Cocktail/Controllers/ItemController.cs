@@ -133,16 +133,14 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
                 debug.Add("AddToCart elindult.");
 
                 var hccApp = new HotcakesApplication(HccRequestContext.Current);
-                debug.Add("HotcakesApplication létrehozva.");
-
-                var cart = hccApp.OrderServices.CurrentShoppingCart();
+                var cart = hccApp.OrderServices.EnsureShoppingCart();
 
                 if (cart == null)
                 {
                     return Json(new
                     {
                         success = false,
-                        message = "A CurrentShoppingCart() null.",
+                        message = "Az EnsureShoppingCart() után is null a cart.",
                         debug = debug
                     });
                 }
