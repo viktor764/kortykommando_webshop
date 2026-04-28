@@ -62,10 +62,9 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(12, -1);
-            pictureBox1.Margin = new Padding(3, 4, 3, 4);
+            pictureBox1.Location = new Point(10, -1);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(28, 35);
+            pictureBox1.Size = new Size(24, 26);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 13;
             pictureBox1.TabStop = false;
@@ -75,9 +74,10 @@
             button1.BackColor = Color.FromArgb(154, 116, 116);
             button1.FlatAppearance.BorderSize = 0;
             button1.FlatStyle = FlatStyle.Popup;
-            button1.Location = new Point(10, 34);
+            button1.Location = new Point(9, 26);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(123, 48);
+            button1.Size = new Size(108, 36);
             button1.TabIndex = 0;
             button1.Text = "Betöltés";
             button1.UseVisualStyleBackColor = false;
@@ -88,10 +88,11 @@
             dgvOrders.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvOrders.BackgroundColor = Color.FromArgb(217, 217, 217);
             dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOrders.Location = new Point(10, 145);
+            dgvOrders.Location = new Point(9, 109);
+            dgvOrders.Margin = new Padding(3, 2, 3, 2);
             dgvOrders.Name = "dgvOrders";
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(990, 236);
+            dgvOrders.Size = new Size(866, 177);
             dgvOrders.TabIndex = 1;
             dgvOrders.CellValueChanged += dgvOrders_CellValueChanged;
             dgvOrders.CurrentCellDirtyStateChanged += dgvOrders_CurrentCellDirtyStateChanged;
@@ -101,9 +102,10 @@
             button2.BackColor = Color.White;
             button2.FlatAppearance.BorderSize = 0;
             button2.FlatStyle = FlatStyle.Popup;
-            button2.Location = new Point(10, 88);
+            button2.Location = new Point(9, 66);
+            button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(123, 48);
+            button2.Size = new Size(108, 36);
             button2.TabIndex = 2;
             button2.Text = "Küldés";
             button2.UseVisualStyleBackColor = false;
@@ -115,20 +117,19 @@
             textBoxFilter.BackColor = Color.White;
             textBoxFilter.BorderStyle = BorderStyle.FixedSingle;
             textBoxFilter.Font = new Font("Segoe UI", 13F);
-            textBoxFilter.Location = new Point(141, 37);
-            textBoxFilter.Margin = new Padding(3, 4, 3, 4);
+            textBoxFilter.Location = new Point(123, 28);
             textBoxFilter.Name = "textBoxFilter";
             textBoxFilter.PlaceholderText = "példa@gmail.com";
-            textBoxFilter.Size = new Size(413, 36);
+            textBoxFilter.Size = new Size(362, 31);
             textBoxFilter.TabIndex = 3;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(41, 9);
+            label1.Location = new Point(36, 7);
             label1.Name = "label1";
-            label1.Size = new Size(89, 20);
+            label1.Size = new Size(72, 15);
             label1.TabIndex = 4;
             label1.Text = "POHÁRNOK";
             // 
@@ -137,9 +138,10 @@
             button3.BackColor = Color.White;
             button3.FlatAppearance.BorderSize = 0;
             button3.FlatStyle = FlatStyle.Popup;
-            button3.Location = new Point(141, 88);
+            button3.Location = new Point(123, 66);
+            button3.Margin = new Padding(3, 2, 3, 2);
             button3.Name = "button3";
-            button3.Size = new Size(123, 48);
+            button3.Size = new Size(108, 36);
             button3.TabIndex = 5;
             button3.Text = "Mind kijelölése";
             button3.UseVisualStyleBackColor = false;
@@ -148,9 +150,9 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(141, 14);
+            label2.Location = new Point(123, 10);
             label2.Name = "label2";
-            label2.Size = new Size(46, 20);
+            label2.Size = new Size(36, 15);
             label2.TabIndex = 6;
             label2.Text = "Email";
             // 
@@ -160,11 +162,10 @@
             textBoxPrice.BackColor = Color.White;
             textBoxPrice.BorderStyle = BorderStyle.FixedSingle;
             textBoxPrice.Font = new Font("Segoe UI", 13F);
-            textBoxPrice.Location = new Point(560, 37);
-            textBoxPrice.Margin = new Padding(3, 4, 3, 4);
+            textBoxPrice.Location = new Point(490, 28);
             textBoxPrice.Name = "textBoxPrice";
             textBoxPrice.PlaceholderText = "2000 Ft";
-            textBoxPrice.Size = new Size(127, 36);
+            textBoxPrice.Size = new Size(111, 31);
             textBoxPrice.TabIndex = 7;
             textBoxPrice.TextChanged += textBoxPrice_TextChanged;
             // 
@@ -174,10 +175,9 @@
             dateTimePicker1.CalendarMonthBackground = Color.WhiteSmoke;
             dateTimePicker1.Font = new Font("Segoe UI", 13F);
             dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(695, 37);
-            dateTimePicker1.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker1.Location = new Point(608, 28);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(150, 36);
+            dateTimePicker1.Size = new Size(132, 31);
             dateTimePicker1.TabIndex = 8;
             dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
             // 
@@ -186,10 +186,9 @@
             dateTimePicker2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker2.Font = new Font("Segoe UI", 13F);
             dateTimePicker2.Format = DateTimePickerFormat.Short;
-            dateTimePicker2.Location = new Point(851, 37);
-            dateTimePicker2.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker2.Location = new Point(745, 28);
             dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(150, 36);
+            dateTimePicker2.Size = new Size(132, 31);
             dateTimePicker2.TabIndex = 9;
             dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
             // 
@@ -197,9 +196,9 @@
             // 
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
-            label3.Location = new Point(560, 13);
+            label3.Location = new Point(490, 10);
             label3.Name = "label3";
-            label3.Size = new Size(121, 20);
+            label3.Size = new Size(98, 15);
             label3.TabIndex = 10;
             label3.Text = "Minimum összeg";
             // 
@@ -207,9 +206,9 @@
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Location = new Point(695, 13);
+            label4.Location = new Point(608, 10);
             label4.Name = "label4";
-            label4.Size = new Size(98, 20);
+            label4.Size = new Size(77, 15);
             label4.TabIndex = 11;
             label4.Text = "Kezdő dátum";
             // 
@@ -217,9 +216,9 @@
             // 
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5.AutoSize = true;
-            label5.Location = new Point(851, 13);
+            label5.Location = new Point(745, 10);
             label5.Name = "label5";
-            label5.Size = new Size(96, 20);
+            label5.Size = new Size(76, 15);
             label5.TabIndex = 12;
             label5.Text = "Végső dátum";
             // 
@@ -228,10 +227,9 @@
             checkBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             checkBox1.AutoSize = true;
             checkBox1.FlatStyle = FlatStyle.Flat;
-            checkBox1.Location = new Point(793, 112);
-            checkBox1.Margin = new Padding(3, 4, 3, 4);
+            checkBox1.Location = new Point(710, 84);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(208, 24);
+            checkBox1.Size = new Size(166, 19);
             checkBox1.TabIndex = 14;
             checkBox1.Text = "Több kupon engedélyezése";
             checkBox1.UseVisualStyleBackColor = true;
@@ -243,10 +241,11 @@
             dgvGiftCards.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvGiftCards.BackgroundColor = Color.FromArgb(217, 217, 217);
             dgvGiftCards.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGiftCards.Location = new Point(10, 467);
+            dgvGiftCards.Location = new Point(9, 350);
+            dgvGiftCards.Margin = new Padding(3, 2, 3, 2);
             dgvGiftCards.Name = "dgvGiftCards";
             dgvGiftCards.RowHeadersWidth = 51;
-            dgvGiftCards.Size = new Size(988, 317);
+            dgvGiftCards.Size = new Size(867, 300);
             dgvGiftCards.TabIndex = 15;
             dgvGiftCards.CellFormatting += dgvGiftCards_CellFormatting;
             // 
@@ -255,9 +254,10 @@
             button4.BackColor = Color.FromArgb(154, 116, 116);
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Popup;
-            button4.Location = new Point(10, 407);
+            button4.Location = new Point(9, 305);
+            button4.Margin = new Padding(3, 2, 3, 2);
             button4.Name = "button4";
-            button4.Size = new Size(123, 48);
+            button4.Size = new Size(108, 36);
             button4.TabIndex = 16;
             button4.Text = "Frissites";
             button4.UseVisualStyleBackColor = false;
@@ -267,9 +267,9 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(851, 395);
+            label6.Location = new Point(745, 296);
             label6.Name = "label6";
-            label6.Size = new Size(96, 20);
+            label6.Size = new Size(76, 15);
             label6.TabIndex = 20;
             label6.Text = "Végső dátum";
             // 
@@ -277,9 +277,9 @@
             // 
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label7.AutoSize = true;
-            label7.Location = new Point(695, 395);
+            label7.Location = new Point(608, 296);
             label7.Name = "label7";
-            label7.Size = new Size(98, 20);
+            label7.Size = new Size(77, 15);
             label7.TabIndex = 19;
             label7.Text = "Kezdő dátum";
             // 
@@ -288,10 +288,9 @@
             dateTimePicker3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker3.Font = new Font("Segoe UI", 13F);
             dateTimePicker3.Format = DateTimePickerFormat.Short;
-            dateTimePicker3.Location = new Point(695, 419);
-            dateTimePicker3.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker3.Location = new Point(608, 314);
             dateTimePicker3.Name = "dateTimePicker3";
-            dateTimePicker3.Size = new Size(150, 36);
+            dateTimePicker3.Size = new Size(132, 31);
             dateTimePicker3.TabIndex = 18;
             dateTimePicker3.ValueChanged += dateTimePicker3_ValueChanged;
             // 
@@ -300,10 +299,9 @@
             dateTimePicker4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateTimePicker4.Font = new Font("Segoe UI", 13F);
             dateTimePicker4.Format = DateTimePickerFormat.Short;
-            dateTimePicker4.Location = new Point(851, 419);
-            dateTimePicker4.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker4.Location = new Point(745, 314);
             dateTimePicker4.Name = "dateTimePicker4";
-            dateTimePicker4.Size = new Size(149, 36);
+            dateTimePicker4.Size = new Size(131, 31);
             dateTimePicker4.TabIndex = 17;
             dateTimePicker4.ValueChanged += dateTimePicker4_ValueChanged;
             // 
@@ -313,18 +311,20 @@
             cmbAmount.Font = new Font("Segoe UI", 9F);
             cmbAmount.FormatString = "C0";
             cmbAmount.FormattingEnabled = true;
-            cmbAmount.Location = new Point(270, 108);
+            cmbAmount.Location = new Point(236, 81);
+            cmbAmount.Margin = new Padding(3, 2, 3, 2);
             cmbAmount.Name = "cmbAmount";
-            cmbAmount.Size = new Size(119, 28);
+            cmbAmount.Size = new Size(105, 23);
             cmbAmount.TabIndex = 21;
             // 
             // label8
             // 
+            label8.Anchor = AnchorStyles.Bottom;
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(146, 401);
+            label8.Location = new Point(373, 655);
             label8.Name = "label8";
-            label8.Size = new Size(188, 56);
+            label8.Size = new Size(152, 42);
             label8.TabIndex = 22;
             label8.Text = "Összes kedvezmény:\r\n- Ft";
             label8.TextAlign = ContentAlignment.TopCenter;
@@ -332,18 +332,18 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(270, 85);
+            label9.Location = new Point(236, 64);
             label9.Name = "label9";
-            label9.Size = new Size(89, 20);
+            label9.Size = new Size(71, 15);
             label9.TabIndex = 23;
             label9.Text = "Kupon érték";
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LavenderBlush;
-            ClientSize = new Size(1010, 796);
+            ClientSize = new Size(884, 703);
             Controls.Add(label9);
             Controls.Add(label8);
             Controls.Add(cmbAmount);
@@ -368,6 +368,7 @@
             Controls.Add(button2);
             Controls.Add(dgvOrders);
             Controls.Add(button1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "Form1";
             Text = "Pohárnok kliensalkalmazás";
             Load += Form1_Load;
