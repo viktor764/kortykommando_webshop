@@ -5,6 +5,7 @@ using DotNetNuke.Web.Mvc.Framework.ActionFilters;
 using System.Linq;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Collections;
+using System;
 
 namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
 {
@@ -41,6 +42,10 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         [DotNetNuke.Web.Mvc.Framework.ActionFilters.ValidateAntiForgeryToken]
         public ActionResult Settings(FormCollection collection)
         {
+            DotNetNuke.Services.Exceptions.Exceptions.LogException(
+                new Exception("!!! SETTINGS POST ELINDULT !!!")
+            );
+
             // 1. LÉPÉS: Ellenőrizzük, hogy egyáltalán jött-e adat
             if (collection == null) return RedirectToDefaultRoute();
 
@@ -50,6 +55,10 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
             {
                 // Keressük a sima "cat1", "cat2"... neveket
                 string value = collection["cat" + i];
+
+                DotNetNuke.Services.Exceptions.Exceptions.LogException(
+                    new Exception("SETTINGS POST BEJÖVŐ: cat" + i + " = " + value)
+                );
 
                 // Ha üres vagy "-1", akkor töröljük a beállítást
                 if (string.IsNullOrEmpty(value) || value == "-1")
@@ -63,6 +72,18 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
                     mc.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat" + i, value);
                     mc.UpdateTabModuleSetting(ModuleContext.TabModuleId, "Cocktail_Cat" + i, value);
                 }
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                string key = "Cocktail_Cat" + i;
+
+                string contextValue = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault(key, "");
+
+                DotNetNuke.Services.Exceptions.Exceptions.LogException(
+                    new Exception("SETTINGS POST ModuleContext visszaolvasás: " + key +
+                                  " / Value=" + contextValue)
+                );
             }
 
             // 2. LÉPÉS: Kényszerített gyorstár ürítés

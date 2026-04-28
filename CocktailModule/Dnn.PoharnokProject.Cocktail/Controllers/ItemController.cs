@@ -11,6 +11,7 @@ using DotNetNuke.Collections;
 using System.Collections.Generic;
 using Hotcakes.Commerce.Catalog;
 using Hotcakes.Commerce;
+using DotNetNuke.Entities.Modules;
 
 namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
 {
@@ -75,16 +76,37 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
             var hccApp = new Hotcakes.Commerce.HotcakesApplication(Hotcakes.Commerce.HccRequestContext.Current);
             var model = new List<IngredientCategoryViewModel>();
 
+            var moduleInfo = ModuleController.Instance.GetModule(
+                ModuleContext.ModuleId,
+                ModuleContext.TabId,
+                true
+            );
+
+            var settings = moduleInfo.ModuleSettings;
+
             for (int i = 1; i <= 5; i++)
             {
                 // Kiolvassuk a mentett kategória ID-t
-                var catId = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat" + i, "");
+                // var catId = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat" + i, "");
+                string key = "Cocktail_Cat" + i;
+                var catId = settings[key] as string ?? "";
 
-                if (!string.IsNullOrEmpty(catId))
+                DotNetNuke.Services.Exceptions.Exceptions.LogException(
+                    new Exception("ITEM FRISS olvasás: Cocktail_Cat" + i + " = " + catId)
+                );
+
+                //if (!string.IsNullOrEmpty(catId))
+                if (!string.IsNullOrEmpty(catId) && catId != "-1")
                 {
                     var category = hccApp.CatalogServices.Categories.Find(catId);
                     if (category != null)
                     {
+                        DotNetNuke.Services.Exceptions.Exceptions.LogException(
+                            new Exception("ITEM INDEX kategória: Cocktail_Cat" + i +
+                                          " = " + catId +
+                                          " / Name = " + category.Name)
+                        );
+
                         int totalCount = 0;
 
                         // 1. Lépés: Kategória-Termék összerendelések lekérése (A "B-Terv" varázslata)
