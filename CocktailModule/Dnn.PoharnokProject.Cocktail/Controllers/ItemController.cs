@@ -82,7 +82,7 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
                 true
             );
 
-            var settings = moduleInfo.ModuleSettings;
+            var settings = moduleInfo.TabModuleSettings;
 
             for (int i = 1; i <= 5; i++)
             {

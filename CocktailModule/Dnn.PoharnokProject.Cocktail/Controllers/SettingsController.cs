@@ -29,11 +29,11 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
             ViewBag.Categories = allCategories;
 
             // Betöltéskor is a "-1" az alapértelmezett
-            ViewBag.Cat1 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat1", "-1");
-            ViewBag.Cat2 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat2", "-1");
-            ViewBag.Cat3 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat3", "-1");
-            ViewBag.Cat4 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat4", "-1");
-            ViewBag.Cat5 = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault("Cocktail_Cat5", "-1");
+            ViewBag.Cat1 = ModuleContext.Configuration.TabModuleSettings.GetValueOrDefault("Cocktail_Cat1", "-1");
+            ViewBag.Cat3 = ModuleContext.Configuration.TabModuleSettings.GetValueOrDefault("Cocktail_Cat3", "-1");
+            ViewBag.Cat4 = ModuleContext.Configuration.TabModuleSettings.GetValueOrDefault("Cocktail_Cat4", "-1");
+            ViewBag.Cat5 = ModuleContext.Configuration.TabModuleSettings.GetValueOrDefault("Cocktail_Cat5", "-1");
+            ViewBag.Cat2 = ModuleContext.Configuration.TabModuleSettings.GetValueOrDefault("Cocktail_Cat2", "-1");
 
             return View();
         }
@@ -42,9 +42,6 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
         [DotNetNuke.Web.Mvc.Framework.ActionFilters.ValidateAntiForgeryToken]
         public ActionResult Settings(FormCollection collection)
         {
-            DotNetNuke.Services.Exceptions.Exceptions.LogException(
-                new Exception("!!! SETTINGS POST ELINDULT !!!")
-            );
 
             // 1. LÉPÉS: Ellenőrizzük, hogy egyáltalán jött-e adat
             if (collection == null) return RedirectToDefaultRoute();
@@ -55,36 +52,19 @@ namespace PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Controllers
             {
                 // Keressük a sima "cat1", "cat2"... neveket
                 string value = collection["cat" + i];
-
-                DotNetNuke.Services.Exceptions.Exceptions.LogException(
-                    new Exception("SETTINGS POST BEJÖVŐ: cat" + i + " = " + value)
-                );
+                string key = "Cocktail_Cat" + i;
 
                 // Ha üres vagy "-1", akkor töröljük a beállítást
-                if (string.IsNullOrEmpty(value) || value == "-1")
+                if (string.IsNullOrWhiteSpace(value) || value == "-1")
                 {
-                    mc.DeleteModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat" + i);
-                    mc.DeleteTabModuleSetting(ModuleContext.TabModuleId, "Cocktail_Cat" + i);
+                    mc.DeleteTabModuleSetting(ModuleContext.TabModuleId, key);
                 }
                 else
                 {
-                    // Ha van érték, RÁMENTÜNK mindkét szintre, hogy biztosan felülírja a régit
-                    mc.UpdateModuleSetting(ModuleContext.ModuleId, "Cocktail_Cat" + i, value);
-                    mc.UpdateTabModuleSetting(ModuleContext.TabModuleId, "Cocktail_Cat" + i, value);
+                    mc.UpdateTabModuleSetting(ModuleContext.TabModuleId, key, value);
                 }
             }
 
-            for (int i = 1; i <= 5; i++)
-            {
-                string key = "Cocktail_Cat" + i;
-
-                string contextValue = ModuleContext.Configuration.ModuleSettings.GetValueOrDefault(key, "");
-
-                DotNetNuke.Services.Exceptions.Exceptions.LogException(
-                    new Exception("SETTINGS POST ModuleContext visszaolvasás: " + key +
-                                  " / Value=" + contextValue)
-                );
-            }
 
             // 2. LÉPÉS: Kényszerített gyorstár ürítés
             DotNetNuke.Common.Utilities.DataCache.ClearModuleCache(ModuleContext.TabId);
