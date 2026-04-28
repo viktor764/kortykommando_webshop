@@ -368,9 +368,11 @@
             Controls.Add(button2);
             Controls.Add(dgvOrders);
             Controls.Add(button1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
             Name = "Form1";
-            Text = "Pohárnok kliensalkalmazás";
+            Text = "Pohárnok kliens";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();
