@@ -1,0 +1,306 @@
+﻿﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<List<PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Models.IngredientCategoryViewModel>>
+
+@{
+    // Lekérjük a modul egyedi ID-ját, amivel minden html elemet és JS funkciót egyediesítünk
+    var modId = Dnn.ModuleContext.ModuleId.ToString();
+}
+
+<style>
+    .cocktail-builder {
+        max-width: 1200px; /* Kicsit több helyet adunk neki, ha a téma engedi */
+        width: 100%;
+        margin: 40px auto;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 50px 20px;
+        border-radius: 8px;
+        box-sizing: border-box; /* Megakadályozza, hogy a padding kifeszítse a dobozt */
+    }
+
+    /* Vízszintes elrendezés a kategóriáknak */
+    /* Vízszintes elrendezés a kategóriáknak */
+    .ingredients-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: nowrap; /* EZ A KULCS: Szigorúan egy sorba kényszeríti az elemeket */
+        gap: 15px; /* Kicsit kisebb rés az elemek között, hogy jobban elférjenek */
+        margin-bottom: 60px;
+        overflow-x: auto; /* Kisebb képernyőn vízszintesen görgethető marad egy sorban */
+        padding-bottom: 15px; /* Hely a görgetősávnak, ha megjelenne */
+    }
+
+    .ingredient-selector {
+        display: flex;
+        align-items: center;
+        flex: 1 1 0; /* Engedi, hogy egyenletesen osszák el a helyet és rugalmasan zsugorodjanak */
+        min-width: 180px; /* Egy ésszerű minimum szélesség, hogy ne nyomódjanak teljesen össze */
+        max-width: 250px;
+    }
+
+    .bottle-display {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Fix magasságú doboz, picit arányosítva az 5 elemhez */
+    .image-wrapper {
+        position: relative;
+        height: 220px; /* 260px-ről csökkentve, hogy a keskenyebb dobozban arányos legyen */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+    .bottle-img {
+        max-height: 180px; /* 220px-ről csökkentve */
+        max-width: 90%;
+        z-index: 5;
+        object-fit: contain;
+        margin-bottom: 20px;
+    }
+
+    /* Ovális árnyék az üveg alatt */
+    .bottle-shadow {
+        position: absolute;
+        bottom: 0px;
+        width: 120px; /* Kisebb árnyék az arányok miatt */
+        height: 35px;
+        background: radial-gradient(ellipse at center, rgba(150,50,150,0.25) 0%, rgba(150,0,150,0) 70%);
+        z-index: 1;
+    }
+
+    /* Termék adatai az üveg alatt */
+    .prod-info {
+        text-align: center;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    .prod-name {
+        font-size: 1.05em;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+        display: block;
+        min-height: 40px; /* Hogy a két soros nevek ne tolják el az árakat egymáshoz képest */
+    }
+
+    .prod-price {
+        font-size: 1em;
+        font-weight: bold;
+        color: #555;
+        display: block;
+    }
+
+    /* Navigációs nyilak */
+    .nav-arrow {
+        background: none;
+        border: none;
+        font-size: 2.5em; /* 3.5em-ről csökkentve, hogy kevésbé foglalja a helyet */
+        color: #333;
+        cursor: pointer;
+        padding: 0 5px; /* Kisebb belső margó */
+        transition: transform 0.2s;
+        user-select: none;
+    }
+
+        .nav-arrow:hover {
+            transform: scale(1.15);
+        }
+
+    /* ... A lábléc és a gomb CSS-e maradhat az eredeti ... */
+    .footer-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    .total-text {
+        font-size: 1.6em;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+
+    .add-to-cart-btn {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 16px 45px;
+        font-size: 1.1em;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .add-to-cart-btn:hover {
+            background: #000;
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+</style>
+
+<div class="cocktail-builder" id="cocktail-module-@modId">
+    @if (Model != null && Model.Any())
+    {
+        <div class="ingredients-row">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var category = Model[i];
+                <div class="ingredient-selector">
+                    @* Az onclick eseményt a specifikus, modulosított JavaScript függvényre kötjük *@
+                    <button type="button" class="nav-arrow" onclick="window['slide_@(modId)'](@i, -1)">❮</button>
+
+                    <div class="bottle-display">
+                        @for (int p = 0; p < category.Products.Count; p++)
+                        {
+                            var prod = category.Products[p];
+                            <div class="product-card card-row-@i"
+                                 data-price="@prod.SitePrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-bvin="@prod.Bvin"
+                                 style="@(p == 0 ? "display:flex;" : "display:none;") flex-direction:column; align-items:center; width:100%;">
+
+                                <div class="image-wrapper">
+                                    <img src="/Portals/0/Hotcakes/Data/products/@(prod.Bvin)/medium/@(prod.ImageFileMedium)"
+                                         alt="@prod.ProductName"
+                                         class="bottle-img"
+                                         onerror="this.onerror=null; this.src='/Portals/0/no-image.png';" />
+                                    <div class="bottle-shadow"></div>
+                                </div>
+
+                                <div class="prod-info">
+                                    <span class="prod-name">@prod.ProductName</span>
+                                    <span class="prod-price">@prod.SitePrice.ToString("N0") Ft</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" class="nav-arrow" onclick="window['slide_@(modId)'](@i, 1)">❯</button>
+                </div>
+            }
+        </div>
+
+        <div class="footer-section">
+            <div class="total-text">
+                @* Az ID helyett classt használunk, hogy a querySelectorAll majd csak ezen a modulon belül keresse *@
+                Csomag értéke: <span class="total-display">0 Ft</span>
+            </div>
+            <button type="button" class="add-to-cart-btn btnAddToCart" onclick="window['addToCart_@(modId)']()">Csomag a kosárba</button>
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center; padding: 20px;">
+            A modul beállításaiban válasszon ki legalább egy kategóriát!
+        </div>
+    }
+</div>
+
+<script>
+    (function () {
+        const modId = '@modId';
+        const container = document.getElementById('cocktail-module-' + modId);
+
+        let currentPositions = [@string.Join(",", Model.Select(m => "0"))];
+        let maxCounts = [@string.Join(",", Model.Select(m => m.Products.Count))];
+
+        window['slide_' + modId] = function (catIndex, direction) {
+            const cards = container.querySelectorAll('.card-row-' + catIndex);
+
+            if (cards.length > 0) {
+                cards[currentPositions[catIndex]].style.display = 'none';
+                currentPositions[catIndex] =
+                    (currentPositions[catIndex] + direction + maxCounts[catIndex]) % maxCounts[catIndex];
+                cards[currentPositions[catIndex]].style.display = 'flex';
+                calculateTotal();
+            }
+        };
+
+        function calculateTotal() {
+            let total = 0;
+
+            container.querySelectorAll('.product-card').forEach(card => {
+                if (window.getComputedStyle(card).display !== 'none') {
+                    total += parseFloat(card.getAttribute('data-price')) || 0;
+                }
+            });
+
+            const displayEl = container.querySelector('.total-display');
+            if (displayEl) {
+                displayEl.innerText = Math.round(total).toLocaleString('hu-HU') + " Ft";
+            }
+        }
+
+        window['addToCart_' + modId] = function () {
+            const selectedIds = [];
+
+            container.querySelectorAll('.product-card').forEach(card => {
+                if (window.getComputedStyle(card).display !== 'none') {
+                    selectedIds.push(card.getAttribute('data-bvin'));
+                }
+            });
+
+            if (selectedIds.length === 0) {
+                alert("Nincs kiválasztott termék.");
+                return;
+            }
+
+            const btn = container.querySelector('.btnAddToCart');
+            btn.disabled = true;
+            btn.innerText = "Hozzáadás...";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddToCart", "Item")',
+                traditional: true,
+                data: { productIds: selectedIds },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response && response.success) {
+                        window.location.href = '/HotcakesStore/Cart';
+                    } else {
+                        alert("Hiba: " + (response && response.message ? response.message : "Ismeretlen hiba."));
+                        btn.disabled = false;
+                        btn.innerText = "Csomag a kosárba";
+                    }
+                },
+
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log("AJAX status:", xhr.status);
+                    console.log("AJAX textStatus:", textStatus);
+                    console.log("AJAX errorThrown:", errorThrown);
+                    console.log("AJAX responseText:", xhr.responseText);
+
+                    /*
+                       DNN néha 200-as státusszal is error ágba dobhat,
+                       ha a JSON után HTML is visszakerül a válaszba.
+                       Ha a kosárba rakás valójában sikerült, akkor itt is tovább lehet menni.
+                    */
+                    if (xhr.status === 200 && xhr.responseText && xhr.responseText.indexOf('"success":true') !== -1) {
+                        window.location.href = '/HotcakesStore/Cart';
+                        return;
+                    }
+
+                    alert("Sajnos hiba történt a kosárba helyezéskor. Kérjük, próbálja újra!");
+                    btn.disabled = false;
+                    btn.innerText = "Csomag a kosárba";
+                }
+            });
+        };
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", calculateTotal);
+        } else {
+            calculateTotal();
+        }
+    })();
+</script>
