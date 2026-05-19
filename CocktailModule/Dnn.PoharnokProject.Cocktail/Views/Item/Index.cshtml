@@ -6,6 +6,60 @@
 }
 
 <style>
+    /* 1. BETÖLTÉSI ANIMÁCIÓ (KEYFRAMES) */
+    @@keyframes fadeInUpMod {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 40px, 0);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @@keyframes bottleInMod {
+        from {
+            opacity: 0;
+            transform: translate3d(-15px, 0, 0) rotate(-3deg);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+    }
+
+    @@keyframes buttonGlowMod {
+        0% {
+            box-shadow: 0 0 5px rgba(243, 169, 83, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(243, 169, 83, 0.7);
+        }
+
+        100% {
+            box-shadow: 0 0 5px rgba(243, 169, 83, 0.4);
+        }
+    }
+
+    /* A dinamikus, ital színét felvevő ragyogás forgatása */
+    @@keyframes spinGlowMod {
+        0% {
+            transform: translateX(-50%) rotate(0deg) scale(1);
+        }
+
+        50% {
+            transform: translateX(-50%) rotate(180deg) scale(1.1);
+        }
+
+        100% {
+            transform: translateX(-50%) rotate(360deg) scale(1);
+        }
+    }
+
     .cocktail-builder {
         width: 100%;
         margin: 20px auto;
@@ -13,11 +67,12 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         background: #000000;
         color: #ffffff;
-        padding: 20px;
+        padding: 40px 20px;
         box-sizing: border-box;
+        animation: fadeInUpMod 0.8s ease-out forwards;
     }
 
     .ingredients-row {
@@ -25,25 +80,47 @@
         justify-content: center;
         align-items: flex-start;
         flex-wrap: nowrap;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 10px;
         overflow-x: auto;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
+        /* GÖRGETŐSÁV ELREJTÉSE */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
+        .ingredients-row::-webkit-scrollbar {
+            display: none;
+        }
+
+    /* KÁRTYA JAVÍTÁSA: Nincs több szürke háttér és éles körvonal */
     .ingredient-selector {
         display: flex;
         align-items: center;
         flex: 1 1 0;
-        min-width: 220px;
-        max-width: 350px;
+        min-width: 200px;
+        max-width: 420px;
+        position: relative;
+        background: transparent; /* Nincs látható doboz */
+        border: none;
+        border-radius: 12px;
+        padding: 10px;
+        /* Finomabb átmenet a hoverhez */
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
+
+        /* KÁRTYA HOVER: Sötét háttér helyett csak finom izzás és emelkedés */
+        .ingredient-selector:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(243, 169, 83, 0.05);
+        }
 
     .bottle-display {
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
     }
 
     .image-wrapper {
@@ -55,34 +132,69 @@
         align-items: flex-end;
     }
 
+        /* RAGYOGÁS A HTML-BŐL VETT KÉP ALAPJÁN (színes derítés) */
+        .image-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 140px;
+            background-image: var(--drink-img);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Elmosás és fényerő a ragyogáshoz */
+            filter: blur(45px) brightness(1.2);
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+    /* Amikor fölé viszed az egeret, megjelenik a színes folt és forogni kezd */
+    .ingredient-selector:hover .image-wrapper::before {
+        opacity: 0.85;
+        animation: spinGlowMod 6s linear infinite;
+    }
+
     .bottle-img {
         max-height: 100%;
         max-width: 100%;
         z-index: 5;
         object-fit: contain;
-        margin-bottom: 8px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .product-card[style*="display:flex"] {
+        animation: bottleInMod 0.6s ease-out forwards;
     }
 
     .bottle-shadow {
         position: absolute;
-        bottom: 0px;
-        width: 140px;
-        height: 25px;
-        background: radial-gradient(ellipse at center, rgba(150,50,150,0.3) 0%, rgba(150,0,150,0) 70%);
+        bottom: 5px;
+        width: 180px;
+        height: 35px;
+        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
         z-index: 1;
     }
 
     .prod-info {
         text-align: center;
-        margin-top: 5px;
+        margin-top: 15px;
         width: 100%;
+        position: relative;
+        z-index: 6;
     }
 
     .prod-name {
-        font-size: 1.1em;
+        font-size: 1.3em;
         font-weight: 600;
         color: #ffffff;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
         display: flex;
         align-items: flex-end;
         justify-content: center;
@@ -92,64 +204,98 @@
     }
 
     .prod-price {
-        font-size: 1.05em;
+        font-size: 1.2em;
         font-weight: bold;
-        color: #dddddd;
+        color: rgba(243, 169, 83, 0.9);
         display: block;
+        letter-spacing: 1px;
     }
 
+    /* KEREK NYILAK BEÁLLÍTÁSA */
     .nav-arrow {
-        background: none;
+        background: transparent;
         border: none;
-        font-size: 3em;
+        outline: none;
+        border-radius: 50%;
+        font-family: Arial, sans-serif;
+        font-size: 1.8em;
+        font-weight: 900;
+        -webkit-text-stroke: 2px #ffffff;
         color: #ffffff;
         cursor: pointer;
-        padding: 0 5px;
-        transition: transform 0.2s;
+        padding: 0;
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        transition: all 0.3s ease;
         user-select: none;
+        position: relative;
+        z-index: 10;
+        margin: 0 5px;
     }
 
         .nav-arrow:hover {
-            transform: scale(1.15);
-            color: #cccccc;
+            background: #ffffff;
+            color: #000000;
+            -webkit-text-stroke: 2px #000000;
+            transform: scale(1.1);
         }
 
     .footer-section {
         display: flex;
         flex-direction: column;
         align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 -10px 40px rgba(243, 169, 83, 0.02);
+        padding-top: 25px;
+        margin-top: 0px;
+        width: 85%;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .total-text {
-        font-size: 1.5em;
+        font-size: 1.7em;
         font-weight: 500;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
         color: #ffffff;
+        letter-spacing: 0.5px;
     }
 
     .add-to-cart-btn {
-        background: rgb(243, 169, 83); /* Az új kért szín */
-        color: #111111; /* Sötét betűszín a jobb olvashatóságért */
-        border: none; /* Keret eltávolítása az elegánsabb megjelenésért */
-        padding: 14px 40px;
-        font-size: 1.15em;
-        font-weight: 600; /* Kicsit vastagabb betűk, hogy jobban mutasson */
-        border-radius: 6px;
+        background: rgb(243, 169, 83);
+        color: #111111;
+        border: none;
+        padding: 16px 50px;
+        font-size: 1.2em;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 50px;
         cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
+        position: relative;
+        animation: buttonGlowMod 2.5s infinite ease-in-out;
+        transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
 
         .add-to-cart-btn:hover {
-            background: rgb(220, 150, 65); /* Picit sötétebb árnyalat, ha rávisszük az egeret */
+            background: rgb(220, 150, 65);
+            transform: scale(1.05);
         }
 
         .add-to-cart-btn:disabled {
             background: #333333;
             color: #888888;
             cursor: not-allowed;
+            animation: none;
+            box-shadow: none;
         }
 </style>
-
 <div class="cocktail-builder" id="cocktail-module-@modId">
     @if (Model != null && Model.Any())
     {
