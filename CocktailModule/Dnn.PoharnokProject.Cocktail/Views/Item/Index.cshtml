@@ -25,7 +25,7 @@
         justify-content: center;
         align-items: flex-start;
         flex-wrap: nowrap;
-        gap: 20px; /* Kicsit nagyobb távolság, hogy a nagyobb képek ne érjenek össze */
+        gap: 20px;
         margin-bottom: 20px;
         overflow-x: auto;
         padding-bottom: 5px;
@@ -35,8 +35,8 @@
         display: flex;
         align-items: center;
         flex: 1 1 0;
-        min-width: 220px; /* Szélesebb minimum méret */
-        max-width: 350px; /* 250-ről 350px-re növelve, hogy a képek tudjanak nőni */
+        min-width: 220px;
+        max-width: 350px;
     }
 
     .bottle-display {
@@ -48,7 +48,7 @@
 
     .image-wrapper {
         position: relative;
-        height: 350px; /* 280px-ről 350px-re növelve a gigantikus képekért */
+        height: 350px;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -57,7 +57,7 @@
 
     .bottle-img {
         max-height: 100%;
-        max-width: 100%; /* Engedjük, hogy teljesen kitöltse a dobozt széltében is */
+        max-width: 100%;
         z-index: 5;
         object-fit: contain;
         margin-bottom: 8px;
@@ -66,7 +66,7 @@
     .bottle-shadow {
         position: absolute;
         bottom: 0px;
-        width: 140px; /* Még szélesebb árnyék a hatalmas képekhez */
+        width: 140px;
         height: 25px;
         background: radial-gradient(ellipse at center, rgba(150,50,150,0.3) 0%, rgba(150,0,150,0) 70%);
         z-index: 1;
@@ -79,7 +79,7 @@
     }
 
     .prod-name {
-        font-size: 1.1em; /* Picit nagyobb betű a nagyobb képhez */
+        font-size: 1.1em;
         font-weight: 600;
         color: #ffffff;
         margin-bottom: 4px;
@@ -92,7 +92,7 @@
     }
 
     .prod-price {
-        font-size: 1.05em; /* Picit nagyobb árcédula */
+        font-size: 1.05em;
         font-weight: bold;
         color: #dddddd;
         display: block;
@@ -101,7 +101,7 @@
     .nav-arrow {
         background: none;
         border: none;
-        font-size: 3em; /* Még nagyobb, határozottabb nyilak */
+        font-size: 3em;
         color: #ffffff;
         cursor: pointer;
         padding: 0 5px;
@@ -128,24 +128,24 @@
     }
 
     .add-to-cart-btn {
-        background: #333333;
-        color: #ffffff;
-        border: 1px solid #555555;
+        background: rgb(243, 169, 83); /* Az új kért szín */
+        color: #111111; /* Sötét betűszín a jobb olvashatóságért */
+        border: none; /* Keret eltávolítása az elegánsabb megjelenésért */
         padding: 14px 40px;
         font-size: 1.15em;
+        font-weight: 600; /* Kicsit vastagabb betűk, hogy jobban mutasson */
         border-radius: 6px;
         cursor: pointer;
-        transition: 0.3s;
+        transition: background 0.3s, transform 0.2s;
     }
 
         .add-to-cart-btn:hover {
-            background: #555555;
+            background: rgb(220, 150, 65); /* Picit sötétebb árnyalat, ha rávisszük az egeret */
         }
 
         .add-to-cart-btn:disabled {
-            background: #222222;
+            background: #333333;
             color: #888888;
-            border-color: #333333;
             cursor: not-allowed;
         }
 </style>
