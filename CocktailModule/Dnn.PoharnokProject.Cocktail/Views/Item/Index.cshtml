@@ -7,34 +7,36 @@
 
 <style>
     .cocktail-builder {
-        /*max-width: 1200px;*/ 
         width: 100%;
-        margin: 40px auto;
+        margin: 20px auto;
+        /* Itt a varázslat: minimum a képernyő magasságának a fele (50 Viewport Height) */
+        min-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Függőlegesen középre rendezi a tartalmat az 50vh-n belül */
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        background: #f4f4f4;
-        padding: 50px 20px;
-        /*border-radius: 8px;*/
-        box-sizing: border-box; 
+        background: #000000; /* Fekete háttér */
+        color: #ffffff; /* Fehér betűk */
+        padding: 40px 20px;
+        box-sizing: border-box;
     }
 
-    /* Vízszintes elrendezés a kategóriáknak */
-    /* Vízszintes elrendezés a kategóriáknak */
     .ingredients-row {
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        flex-wrap: nowrap; /* EZ A KULCS: Szigorúan egy sorba kényszeríti az elemeket */
-        gap: 15px; /* Kicsit kisebb rés az elemek között, hogy jobban elférjenek */
-        margin-bottom: 60px;
-        overflow-x: auto; /* Kisebb képernyőn vízszintesen görgethető marad egy sorban */
-        padding-bottom: 15px; /* Hely a görgetősávnak, ha megjelenne */
+        flex-wrap: nowrap;
+        gap: 15px;
+        margin-bottom: 40px; /* Kényelmes térköz az alsó gombig */
+        overflow-x: auto;
+        padding-bottom: 10px;
     }
 
     .ingredient-selector {
         display: flex;
         align-items: center;
-        flex: 1 1 0; /* Engedi, hogy egyenletesen osszák el a helyet és rugalmasan zsugorodjanak */
-        min-width: 180px; /* Egy ésszerű minimum szélesség, hogy ne nyomódjanak teljesen össze */
+        flex: 1 1 0;
+        min-width: 180px;
         max-width: 250px;
     }
 
@@ -45,10 +47,9 @@
         align-items: center;
     }
 
-    /* Fix magasságú doboz, picit arányosítva az 5 elemhez */
     .image-wrapper {
         position: relative;
-        height: 220px; /* 260px-ről csökkentve, hogy a keskenyebb dobozban arányos legyen */
+        height: 200px; /* Visszanövelve egy egészséges méretre */
         width: 100%;
         display: flex;
         justify-content: center;
@@ -56,24 +57,22 @@
     }
 
     .bottle-img {
-        max-height: 180px; /* 220px-ről csökkentve */
+        max-height: 180px; /* Jól láthatóak lesznek az üvegek */
         max-width: 90%;
         z-index: 5;
         object-fit: contain;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
-    /* Ovális árnyék az üveg alatt */
     .bottle-shadow {
         position: absolute;
         bottom: 0px;
-        width: 120px; /* Kisebb árnyék az arányok miatt */
-        height: 35px;
-        background: radial-gradient(ellipse at center, rgba(150,50,150,0.25) 0%, rgba(150,0,150,0) 70%);
+        width: 110px;
+        height: 30px;
+        background: radial-gradient(ellipse at center, rgba(150,50,150,0.3) 0%, rgba(150,0,150,0) 70%);
         z-index: 1;
     }
 
-    /* Termék adatai az üveg alatt */
     .prod-info {
         text-align: center;
         margin-top: 15px;
@@ -83,54 +82,53 @@
     .prod-name {
         font-size: 1.05em;
         font-weight: 600;
-        color: #333;
+        color: #ffffff; /* Fehér név */
         margin-bottom: 4px;
         display: block;
-        min-height: 40px; /* Hogy a két soros nevek ne tolják el az árakat egymáshoz képest */
+        min-height: 40px;
     }
 
     .prod-price {
         font-size: 1em;
         font-weight: bold;
-        color: #555;
+        color: #dddddd; /* Világosszürke ár */
         display: block;
     }
 
-    /* Navigációs nyilak */
     .nav-arrow {
         background: none;
         border: none;
-        font-size: 2.5em; /* 3.5em-ről csökkentve, hogy kevésbé foglalja a helyet */
-        color: #333;
+        font-size: 2.5em; /* Visszaállítva szép nagyra */
+        color: #ffffff; /* Fehér nyilak */
         cursor: pointer;
-        padding: 0 5px; /* Kisebb belső margó */
+        padding: 0 5px;
         transition: transform 0.2s;
         user-select: none;
     }
 
         .nav-arrow:hover {
             transform: scale(1.15);
+            color: #cccccc; /* Halványodik hoverre */
         }
 
-    /* ... A lábléc és a gomb CSS-e maradhat az eredeti ... */
     .footer-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 40px;
     }
 
     .total-text {
-        font-size: 1.6em;
+        font-size: 1.5em;
         font-weight: 500;
         margin-bottom: 20px;
+        color: #ffffff;
     }
 
     .add-to-cart-btn {
-        background: #333;
-        color: #fff;
-        border: none;
-        padding: 16px 45px;
+        background: #333333; /* Sötétszürke gomb */
+        color: #ffffff;
+        border: 1px solid #555555;
+        padding: 15px 40px;
         font-size: 1.1em;
         border-radius: 6px;
         cursor: pointer;
@@ -138,11 +136,13 @@
     }
 
         .add-to-cart-btn:hover {
-            background: #000;
+            background: #555555; /* Kivilágosodik hoverre */
         }
 
         .add-to-cart-btn:disabled {
-            background: #ccc;
+            background: #222222;
+            color: #888888;
+            border-color: #333333;
             cursor: not-allowed;
         }
 </style>
