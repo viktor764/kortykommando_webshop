@@ -9,15 +9,14 @@
     .cocktail-builder {
         width: 100%;
         margin: 20px auto;
-        /* Itt a varázslat: minimum a képernyő magasságának a fele (50 Viewport Height) */
         min-height: 50vh;
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Függőlegesen középre rendezi a tartalmat az 50vh-n belül */
+        justify-content: center;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        background: #000000; /* Fekete háttér */
-        color: #ffffff; /* Fehér betűk */
-        padding: 40px 20px;
+        background: #000000;
+        color: #ffffff;
+        padding: 20px;
         box-sizing: border-box;
     }
 
@@ -26,18 +25,18 @@
         justify-content: center;
         align-items: flex-start;
         flex-wrap: nowrap;
-        gap: 15px;
-        margin-bottom: 40px; /* Kényelmes térköz az alsó gombig */
+        gap: 20px; /* Kicsit nagyobb távolság, hogy a nagyobb képek ne érjenek össze */
+        margin-bottom: 20px;
         overflow-x: auto;
-        padding-bottom: 10px;
+        padding-bottom: 5px;
     }
 
     .ingredient-selector {
         display: flex;
         align-items: center;
         flex: 1 1 0;
-        min-width: 180px;
-        max-width: 250px;
+        min-width: 220px; /* Szélesebb minimum méret */
+        max-width: 350px; /* 250-ről 350px-re növelve, hogy a képek tudjanak nőni */
     }
 
     .bottle-display {
@@ -49,7 +48,7 @@
 
     .image-wrapper {
         position: relative;
-        height: 200px; /* Visszanövelve egy egészséges méretre */
+        height: 350px; /* 280px-ről 350px-re növelve a gigantikus képekért */
         width: 100%;
         display: flex;
         justify-content: center;
@@ -57,49 +56,53 @@
     }
 
     .bottle-img {
-        max-height: 180px; /* Jól láthatóak lesznek az üvegek */
-        max-width: 90%;
+        max-height: 100%;
+        max-width: 100%; /* Engedjük, hogy teljesen kitöltse a dobozt széltében is */
         z-index: 5;
         object-fit: contain;
-        margin-bottom: 15px;
+        margin-bottom: 8px;
     }
 
     .bottle-shadow {
         position: absolute;
         bottom: 0px;
-        width: 110px;
-        height: 30px;
+        width: 140px; /* Még szélesebb árnyék a hatalmas képekhez */
+        height: 25px;
         background: radial-gradient(ellipse at center, rgba(150,50,150,0.3) 0%, rgba(150,0,150,0) 70%);
         z-index: 1;
     }
 
     .prod-info {
         text-align: center;
-        margin-top: 15px;
+        margin-top: 5px;
         width: 100%;
     }
 
     .prod-name {
-        font-size: 1.05em;
+        font-size: 1.1em; /* Picit nagyobb betű a nagyobb képhez */
         font-weight: 600;
-        color: #ffffff; /* Fehér név */
+        color: #ffffff;
         margin-bottom: 4px;
-        display: block;
-        min-height: 40px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 65px;
+        line-height: 1.3;
+        overflow: hidden;
     }
 
     .prod-price {
-        font-size: 1em;
+        font-size: 1.05em; /* Picit nagyobb árcédula */
         font-weight: bold;
-        color: #dddddd; /* Világosszürke ár */
+        color: #dddddd;
         display: block;
     }
 
     .nav-arrow {
         background: none;
         border: none;
-        font-size: 2.5em; /* Visszaállítva szép nagyra */
-        color: #ffffff; /* Fehér nyilak */
+        font-size: 3em; /* Még nagyobb, határozottabb nyilak */
+        color: #ffffff;
         cursor: pointer;
         padding: 0 5px;
         transition: transform 0.2s;
@@ -108,7 +111,7 @@
 
         .nav-arrow:hover {
             transform: scale(1.15);
-            color: #cccccc; /* Halványodik hoverre */
+            color: #cccccc;
         }
 
     .footer-section {
@@ -120,23 +123,23 @@
     .total-text {
         font-size: 1.5em;
         font-weight: 500;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         color: #ffffff;
     }
 
     .add-to-cart-btn {
-        background: #333333; /* Sötétszürke gomb */
+        background: #333333;
         color: #ffffff;
         border: 1px solid #555555;
-        padding: 15px 40px;
-        font-size: 1.1em;
+        padding: 14px 40px;
+        font-size: 1.15em;
         border-radius: 6px;
         cursor: pointer;
         transition: 0.3s;
     }
 
         .add-to-cart-btn:hover {
-            background: #555555; /* Kivilágosodik hoverre */
+            background: #555555;
         }
 
         .add-to-cart-btn:disabled {
