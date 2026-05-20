@@ -236,7 +236,7 @@
             dgvGiftCards.Location = new Point(10, 494);
             dgvGiftCards.Name = "dgvGiftCards";
             dgvGiftCards.RowHeadersWidth = 51;
-            dgvGiftCards.Size = new Size(1115, 400);
+            dgvGiftCards.Size = new Size(1115, 375);
             dgvGiftCards.TabIndex = 15;
             dgvGiftCards.CellFormatting += dgvGiftCards_CellFormatting;
             // 
@@ -313,7 +313,7 @@
             label8.Anchor = AnchorStyles.Bottom;
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(488, 900);
+            label8.Location = new Point(470, 872);
             label8.Name = "label8";
             label8.Size = new Size(188, 56);
             label8.TabIndex = 22;
