@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Windows.Forms;
-using Microsoft.VisualBasic;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace poharnok_client_application
 {
@@ -18,8 +20,8 @@ namespace poharnok_client_application
             UpdateButtonState();
             cmbAmount.Items.AddRange(new object[] { 500, 1500, 3000, 5000 });
             cmbAmount.SelectedIndex = 1; // Alapértelmezett az 1500
-
         }
+
         private List<OrderDisplayModel> _mindenAdat = new List<OrderDisplayModel>();
         private bool _allSelected = false; // Segédváltozó az állapot követéséhez
 
@@ -39,16 +41,14 @@ namespace poharnok_client_application
                             .Where(o => o.IsPlaced == false && !string.IsNullOrEmpty(o.UserEmail))
                             .Select(o => new OrderDisplayModel
                             {
-
                                 Nev = $"{o.BillingAddress?.FirstName} {o.BillingAddress?.LastName}",
                                 Keresztnev = o.BillingAddress?.FirstName ?? "Vásárlónk",
-
                                 Azonosito = o.Id,
                                 Email = o.UserEmail,
                                 Osszeg = o.TotalGrand,
                                 Frissitve = ParseJsonDate(o.LastUpdatedUtc)
-
                             }).ToList();
+
                         dgvOrders.DataSource = _mindenAdat;
                         UpdateButtonState();
                     }
@@ -59,33 +59,265 @@ namespace poharnok_client_application
                 }
             }
             ApplyFilters();
-
         }
 
         private void SendEmailWithGiftCard(string recipientEmail, string keresztnev, string cardCode, decimal amount)
         {
             try
             {
+                // ITT VAN A JAVÍTÁS: Megvizsgáljuk, hogy a keresztnév üres-e, vagy csak szóköz
+                string megszolitas = string.IsNullOrWhiteSpace(keresztnev) ? "Vásárlónk" : keresztnev;
+
                 var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
+                    // FIGYELEM: A jelszavad élesítés elõtt érdemes környezeti változóba vagy config fájlba rejteni!
                     Credentials = new NetworkCredential("poharnok.contact@gmail.com", "zguh viqt wuea csam"),
                     EnableSsl = true,
                 };
-                //string koszones = string.IsNullOrWhiteSpace(recipientName) ? "Vásárlónk" : recipientName;
+
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("sajat.email@gmail.com"),
-                    Subject = "Különleges ajándék neked!",
-                    Body = $"Kedves {keresztnev}!\n\n" +
-               $"Szeretnénk megajándékozni egy {amount} Ft értékû ajándékkártyával, " +
-               $"melyet a következõ vásárlásodnál használhatsz fel.\n\n" +
-               $"Kódod: {cardCode}\n\n" +
-               "Várunk vissza az áruházba!",
-                    IsBodyHtml = false,
+                    From = new MailAddress("poharnok.contact@gmail.com"),
+                    Subject = "Ajándék vár a kosaradban!",
+                    IsBodyHtml = true, // A sima Body tulajdonságot üresen hagyjuk, mert AlternateView-t használunk
                 };
 
                 mailMessage.To.Add(recipientEmail);
+
+                // A HTML tartalom összeállítása
+                string htmlBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+
+<style>
+body {{
+    margin:0;
+    padding:0;
+    background:#1a1a1a;
+    font-family:Arial, sans-serif;
+}}
+
+.wrapper {{
+    width:100%;
+    padding:40px 0;
+    background:#1a1a1a;
+}}
+
+.container {{
+    width:600px;
+    margin:0 auto;
+    background:#1f1f1f;
+    border:1px solid #6d141b;
+    border-radius:12px;
+    overflow:hidden;
+}}
+
+.header {{
+    background:#6d141b;
+    padding:35px 30px;
+    text-align:center;
+}}
+
+.logo {{
+    max-width:220px;
+    margin-bottom:20px;
+}}
+
+.title {{
+    color:#ffffff;
+    font-size:30px;
+    font-weight:bold;
+    line-height:38px;
+}}
+
+.subtitle {{
+    color:#f0d7da;
+    font-size:14px;
+    margin-top:10px;
+}}
+
+.content {{
+    padding:35px 30px;
+}}
+
+.text {{
+    color:#d6d6d6;
+    font-size:15px;
+    line-height:26px;
+}}
+
+.gift-box {{
+    margin:30px 0;
+    background:#171717;
+    border:1px solid #6d141b;
+    border-radius:10px;
+    padding:25px;
+    text-align:center;
+}}
+
+.gift-label {{
+    color:#cccccc;
+    font-size:13px;
+    margin-bottom:12px;
+}}
+
+.gift-code {{
+    color:#ffffff;
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:3px;
+}}
+
+.button {{
+    display:inline-block;
+    margin-top:30px;
+    background:#6d141b;
+    color:#ffffff !important;
+    text-decoration:none;
+    padding:14px 30px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:bold;
+    text-transform:uppercase;
+}}
+
+.footer {{
+    padding:28px;
+    text-align:center;
+    border-top:1px solid #333333;
+    background:#151515;
+    color:#999999;
+    font-size:12px;
+    line-height:20px;
+}}
+
+.divider {{
+    width:120px;
+    height:2px;
+    background:#6d141b;
+    margin:20px auto;
+    border-radius:10px;
+}}
+</style>
+</head>
+
+<body>
+
+<div class='wrapper'>
+
+    <table class='container' cellpadding='0' cellspacing='0' border='0' align='center'>
+
+        <tr>
+            <td class='header'>
+
+                <!-- Itt történik a varázslat: az src a 'PoharnokLogo' Content ID-ra (cid) hivatkozik -->
+                <img class='logo' src='cid:PoharnokLogo' alt='Pohárnok'>
+
+                <div class='title'>
+                    Ajándék vár a kosaradban!
+                </div>
+
+                <div class='subtitle'>
+                    Ne hagyd elveszni a kiválasztott termékeket.
+                </div>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td class='content'>
+
+                <div class='text'>
+
+                    <!-- ITT VAN A JAVÍTÁS: keresztnev helyett megszolitas -->
+                    Kedves {megszolitas}!<br><br>
+
+                    Észrevettük, hogy korábban nálunk hagytál egy kosarat.<br>
+                    Szeretnénk segíteni a döntésben, ezért készítettünk neked egy
+                    <strong>{amount} Ft-os ajándékkártyát</strong>.
+
+                </div>
+
+                <div class='gift-box'>
+
+                    <div class='gift-label'>
+                        A kuponkódod:
+                    </div>
+
+                    <div class='gift-code'>
+                        {cardCode}
+                    </div>
+
+                </div>
+
+                <div class='text'>
+
+                    Használd fel a pénztárnál, és szerezd meg kedvenc italaid kedvezményesen.<br><br>
+
+                    Az ajánlat korlátozott ideig érvényes.
+
+                </div>
+
+                <div align='center'>
+
+                    <a href='http://20.93.113.186'
+                       class='button'>
+
+                        Vissza a kosárhoz
+
+                    </a>
+
+                </div>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td class='footer'>
+
+                Pohárnok
+
+                <div class='divider'></div>
+
+                Üdvözlettel a Pohárnok csapata 
+
+            </td>
+        </tr>
+
+    </table>
+
+</div>
+
+</body>
+</html>
+";
+
+                // 1. Létrehozzuk a HTML nézetet az e-mailhez
+                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
+
+                // 2. Kép betöltése a Solutionbõl (feltételezve, hogy csinálsz egy 'Images' mappát)
+                string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "logo.jpg");
+
+                if (File.Exists(imagePath))
+                {
+                    LinkedResource logo = new LinkedResource(imagePath, "image/jpg")
+                    {
+                        ContentId = "PoharnokLogo" // Ennek kell egyeznie az <img> src='cid:...' értékkel!
+                    };
+
+                    // 3. Hozzáadjuk a képet és a nézetet a levélhez
+                    htmlView.LinkedResources.Add(logo);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[FIGYELMEZTETÉS] A kép nem található az alábbi útvonalon: {imagePath}");
+                }
+
+                mailMessage.AlternateViews.Add(htmlView);
+
                 smtpClient.Send(mailMessage);
             }
             catch (Exception ex)
@@ -93,7 +325,6 @@ namespace poharnok_client_application
                 System.Diagnostics.Debug.WriteLine($"[EMAIL HIBA] {ex.Message}");
             }
         }
-
 
         private void UpdateButtonState()
         {
@@ -107,7 +338,6 @@ namespace poharnok_client_application
             // Szín beállítása (opcionális, az Enabled = false alapból szürkít)
             button2.BackColor = hasSelection ? Color.White : Color.LightGray;
         }
-
 
         // Ez kényszeríti a táblázatot, hogy azonnal mentse a pipát, ne csak a cella elhagyásakor
         private void dgvOrders_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -136,8 +366,6 @@ namespace poharnok_client_application
             long ms = long.Parse(msStr);
             return DateTimeOffset.FromUnixTimeMilliseconds(ms).DateTime.ToLocalTime();
         }
-
-
 
         private async void button2_Click(object sender, EventArgs e)
         {
@@ -237,6 +465,7 @@ namespace poharnok_client_application
                 }
             }
         }
+
         private void ApplyFilters()
         {
             string emailSzuro = textBoxFilter.Text.ToLower();
@@ -248,7 +477,6 @@ namespace poharnok_client_application
             DateTime minDatum = dateTimePicker1.Value.Date;
             DateTime maxDatum = dateTimePicker2.Value.Date;
 
-
             var szurtLista = _mindenAdat.Where(x =>
                 x.Email.ToLower().Contains(emailSzuro) &&
                 x.Osszeg >= minAr &&
@@ -257,7 +485,7 @@ namespace poharnok_client_application
             ).ToList();
 
             dgvOrders.DataSource = szurtLista;
-            
+
             dgvOrders.Columns["Kijelolve"].Width = 80;
             dgvOrders.Columns["Kijelolve"].HeaderText = "Kijelölve";
 
@@ -311,7 +539,7 @@ namespace poharnok_client_application
 
         private async void RefreshGiftCardTable()
         {
-            var apiValasz = await GetExistingGiftCardsAsync(); // [cite: 207]
+            var apiValasz = await GetExistingGiftCardsAsync();
 
             // Konvertáljuk a csúnya stringeket szép objektumokká
             _osszesGiftCard = apiValasz.Select(c => new GiftCardDisplayModel
@@ -354,7 +582,6 @@ namespace poharnok_client_application
                 dgvGiftCards.Columns["Kartyaszam"].HeaderText = "Kupon";
                 dgvGiftCards.Columns["Kartyaszam"].Width = 260;
 
-
                 dgvGiftCards.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dgvGiftCards.Columns["Email"].MinimumWidth = 180;
             }
@@ -380,12 +607,11 @@ namespace poharnok_client_application
             ApplyFilters();
         }
 
-
-
         private void textBoxFilter_TextChanged(object sender, EventArgs e)
         {
             ApplyFilters();
         }
+
         private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
         {
             ApplyFilters();
@@ -438,6 +664,7 @@ namespace poharnok_client_application
                 }
             }
         }
+
         private void dateTimePicker3_ValueChanged(object sender, EventArgs e)
         {
             ApplyGiftCardFilters();
