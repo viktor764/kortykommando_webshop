@@ -1,4 +1,4 @@
-﻿﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<List<PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Models.IngredientCategoryViewModel>>
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<List<PoharnokProject.Dnn.Dnn.PoharnokProject.Cocktail.Models.IngredientCategoryViewModel>>
 
 @{
     // Lekérjük a modul egyedi ID-ját, amivel minden html elemet és JS funkciót egyediesítünk
@@ -6,144 +6,298 @@
 }
 
 <style>
-    .cocktail-builder {
-        max-width: 1200px; /* Kicsit több helyet adunk neki, ha a téma engedi */
-        width: 100%;
-        margin: 40px auto;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        background: #f4f4f4;
-        padding: 50px 20px;
-        border-radius: 8px;
-        box-sizing: border-box; /* Megakadályozza, hogy a padding kifeszítse a dobozt */
+    /* 1. BETÖLTÉSI ANIMÁCIÓ (KEYFRAMES) */
+    @@keyframes fadeInUpMod {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 40px, 0);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
     }
 
-    /* Vízszintes elrendezés a kategóriáknak */
-    /* Vízszintes elrendezés a kategóriáknak */
+    @@keyframes bottleInMod {
+        from {
+            opacity: 0;
+            transform: translate3d(-15px, 0, 0) rotate(-3deg);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+    }
+
+    @@keyframes buttonGlowMod {
+        0% {
+            box-shadow: 0 0 5px rgba(243, 169, 83, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(243, 169, 83, 0.7);
+        }
+
+        100% {
+            box-shadow: 0 0 5px rgba(243, 169, 83, 0.4);
+        }
+    }
+
+    /* A dinamikus, ital színét felvevő ragyogás forgatása */
+    @@keyframes spinGlowMod {
+        0% {
+            transform: translateX(-50%) rotate(0deg) scale(1);
+        }
+
+        50% {
+            transform: translateX(-50%) rotate(180deg) scale(1.05);
+        }
+
+        100% {
+            transform: translateX(-50%) rotate(360deg) scale(1);
+        }
+    }
+
+    .cocktail-builder {
+        width: 100%;
+        margin: 20px auto;
+        min-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: #000000;
+        color: #ffffff;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        animation: fadeInUpMod 0.8s ease-out forwards;
+    }
+
     .ingredients-row {
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        flex-wrap: nowrap; /* EZ A KULCS: Szigorúan egy sorba kényszeríti az elemeket */
-        gap: 15px; /* Kicsit kisebb rés az elemek között, hogy jobban elférjenek */
-        margin-bottom: 60px;
-        overflow-x: auto; /* Kisebb képernyőn vízszintesen görgethető marad egy sorban */
-        padding-bottom: 15px; /* Hely a görgetősávnak, ha megjelenne */
+        flex-wrap: nowrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        /* GÖRGETŐSÁV ELREJTÉSE */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
+
+        .ingredients-row::-webkit-scrollbar {
+            display: none;
+        }
 
     .ingredient-selector {
         display: flex;
         align-items: center;
-        flex: 1 1 0; /* Engedi, hogy egyenletesen osszák el a helyet és rugalmasan zsugorodjanak */
-        min-width: 180px; /* Egy ésszerű minimum szélesség, hogy ne nyomódjanak teljesen össze */
-        max-width: 250px;
+        flex: 1 1 0;
+        min-width: 130px;
+        max-width: 350px;
+        position: relative;
+        background: transparent; /* Nincs látható doboz */
+        border: none;
+        border-radius: 12px;
+        padding: 5px;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
+
+        .ingredient-selector:hover {
+            transform: translateY(-15px);
+        }
 
     .bottle-display {
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
     }
 
-    /* Fix magasságú doboz, picit arányosítva az 5 elemhez */
     .image-wrapper {
         position: relative;
-        height: 220px; /* 260px-ről csökkentve, hogy a keskenyebb dobozban arányos legyen */
+        height: 300px;
         width: 100%;
         display: flex;
         justify-content: center;
         align-items: flex-end;
     }
 
+        /* ERŐSÍTETT, ABSZTRAKT, PIROS DERÍTÉSŰ FOLT */
+        .image-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 210px; /* Egy kicsit szélesebb alapot kapott */
+            height: 160px; /* Alacsonyabb magasság a folt-szerűségért */
+            /* JAVÍTÁS: Sötét, telített, tiszta piros base a dominanciáért */
+            background-color: rgba(255, 0, 0, 0.2);
+            background-image: var(--drink-img);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* JAVÍTÁS: Jelentősen puhább szélek (35px -> 55px blur) és nagyobb fényerő a pirosért */
+            filter: blur(55px) brightness(2.2);
+            /* JAVÍTÁS: Absztrakt, nebulózus, szabálytalan folt alakzat a sarok-értékek használatával */
+            border-radius: 40% 60% 70% 50% / 50% 60% 40% 70%;
+            z-index: 1;
+            opacity: 0;
+            animation: spinGlowMod 8s linear infinite;
+            transition: opacity 0.5s ease;
+        }
+
+    .ingredient-selector:hover .image-wrapper::before {
+        opacity: 0.9; /* Szépen áttűnik de nem vakít */
+    }
+
     .bottle-img {
-        max-height: 180px; /* 220px-ről csökkentve */
-        max-width: 90%;
+        max-height: 100%;
+        max-width: 100%;
         z-index: 5;
         object-fit: contain;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        position: relative;
     }
 
-    /* Ovális árnyék az üveg alatt */
+    .product-card[style*="display:flex"] {
+        animation: bottleInMod 0.6s ease-out forwards;
+    }
+
     .bottle-shadow {
         position: absolute;
-        bottom: 0px;
-        width: 120px; /* Kisebb árnyék az arányok miatt */
-        height: 35px;
-        background: radial-gradient(ellipse at center, rgba(150,50,150,0.25) 0%, rgba(150,0,150,0) 70%);
+        bottom: 5px;
+        width: 150px;
+        height: 25px;
+        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
         z-index: 1;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    /* Termék adatai az üveg alatt */
+    .ingredient-selector:hover .bottle-shadow {
+        transform: scale(1.4);
+        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
+    }
+
     .prod-info {
         text-align: center;
         margin-top: 15px;
         width: 100%;
+        position: relative;
+        z-index: 6;
     }
 
     .prod-name {
-        font-size: 1.05em;
+        font-size: 1.1em;
         font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-        display: block;
-        min-height: 40px; /* Hogy a két soros nevek ne tolják el az árakat egymáshoz képest */
+        color: #ffffff;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 55px;
+        line-height: 1.3;
+        overflow: hidden;
     }
 
     .prod-price {
-        font-size: 1em;
+        font-size: 1.1em;
         font-weight: bold;
-        color: #555;
+        color: rgba(243, 169, 83, 0.9);
         display: block;
+        letter-spacing: 1px;
     }
 
-    /* Navigációs nyilak */
+    /* KEREK NYILAK BEÁLLÍTÁSA */
     .nav-arrow {
-        background: none;
+        background: transparent;
         border: none;
-        font-size: 2.5em; /* 3.5em-ről csökkentve, hogy kevésbé foglalja a helyet */
-        color: #333;
+        outline: none;
+        border-radius: 50%;
+        font-family: Arial, sans-serif;
+        font-size: 1.5em;
+        font-weight: 900;
+        -webkit-text-stroke: 2px #ffffff;
+        color: #ffffff;
         cursor: pointer;
-        padding: 0 5px; /* Kisebb belső margó */
-        transition: transform 0.2s;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        transition: all 0.3s ease;
         user-select: none;
+        position: relative;
+        z-index: 10;
+        margin: 0 2px;
     }
 
         .nav-arrow:hover {
-            transform: scale(1.15);
+            background: #ffffff;
+            color: #000000;
+            -webkit-text-stroke: 2px #000000;
+            transform: scale(1.1);
         }
 
-    /* ... A lábléc és a gomb CSS-e maradhat az eredeti ... */
     .footer-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 -10px 40px rgba(243, 169, 83, 0.02);
+        padding-top: 25px;
+        margin-top: 0px;
+        width: 85%;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .total-text {
-        font-size: 1.6em;
+        font-size: 1.5em;
         font-weight: 500;
         margin-bottom: 20px;
+        color: #ffffff;
+        letter-spacing: 0.5px;
     }
 
     .add-to-cart-btn {
-        background: #333;
-        color: #fff;
+        background: rgb(243, 169, 83);
+        color: #111111;
         border: none;
-        padding: 16px 45px;
+        padding: 15px 45px;
         font-size: 1.1em;
-        border-radius: 6px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 50px;
         cursor: pointer;
-        transition: 0.3s;
+        position: relative;
+        animation: buttonGlowMod 2.5s infinite ease-in-out;
+        transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
 
         .add-to-cart-btn:hover {
-            background: #000;
+            background: rgb(220, 150, 65);
+            transform: scale(1.05);
         }
 
         .add-to-cart-btn:disabled {
-            background: #ccc;
+            background: #333333;
+            color: #888888;
             cursor: not-allowed;
+            animation: none;
+            box-shadow: none;
         }
 </style>
 
@@ -155,7 +309,6 @@
             {
                 var category = Model[i];
                 <div class="ingredient-selector">
-                    @* Az onclick eseményt a specifikus, modulosított JavaScript függvényre kötjük *@
                     <button type="button" class="nav-arrow" onclick="window['slide_@(modId)'](@i, -1)">❮</button>
 
                     <div class="bottle-display">
@@ -167,7 +320,7 @@
                                  data-bvin="@prod.Bvin"
                                  style="@(p == 0 ? "display:flex;" : "display:none;") flex-direction:column; align-items:center; width:100%;">
 
-                                <div class="image-wrapper">
+                                <div class="image-wrapper" style="--drink-img: url('/Portals/0/Hotcakes/Data/products/@(prod.Bvin)/medium/@(prod.ImageFileMedium)');">
                                     <img src="/Portals/0/Hotcakes/Data/products/@(prod.Bvin)/medium/@(prod.ImageFileMedium)"
                                          alt="@prod.ProductName"
                                          class="bottle-img"
@@ -190,7 +343,6 @@
 
         <div class="footer-section">
             <div class="total-text">
-                @* Az ID helyett classt használunk, hogy a querySelectorAll majd csak ezen a modulon belül keresse *@
                 Csomag értéke: <span class="total-display">0 Ft</span>
             </div>
             <button type="button" class="add-to-cart-btn btnAddToCart" onclick="window['addToCart_@(modId)']()">Csomag a kosárba</button>
@@ -280,11 +432,6 @@
                     console.log("AJAX errorThrown:", errorThrown);
                     console.log("AJAX responseText:", xhr.responseText);
 
-                    /*
-                       DNN néha 200-as státusszal is error ágba dobhat,
-                       ha a JSON után HTML is visszakerül a válaszba.
-                       Ha a kosárba rakás valójában sikerült, akkor itt is tovább lehet menni.
-                    */
                     if (xhr.status === 200 && xhr.responseText && xhr.responseText.indexOf('"success":true') !== -1) {
                         window.location.href = '/HotcakesStore/Cart';
                         return;
